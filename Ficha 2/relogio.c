@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include "glm.h"
 
 #if defined(__APPLE__) || defined(MACOSX)
 #include <GLUT/glut.h>
@@ -10,10 +11,12 @@
 #include <GL/glut.h>
 #endif
 
+//#define VERTICES 20 
+
 /**************************************
 ************* CONSTANTE PI ************
 **************************************/
-
+  
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
@@ -265,7 +268,241 @@ void specialKeyUp(int key, int x, int y)
     printf("Largou a tecla especial %d\n", key);
 }
 
-void poligono(GLint n, GLfloat x0, GLfloat y0, GLfloat r);
+void poligono(GLint n, GLfloat x0, GLfloat y0, GLfloat r)
+{
+  // podemos aqui ter como base a void desenhar_circunferencia abaixo?
+}
+
+/*PONTO ponto_medio(PONTO p1, PONTO p2)
+{
+    PONTO paux;
+    paux.x = p1.x + p2.x / 2;
+    paux.y = p1.y + p2.y / 2;
+    return paux;
+}
+
+void desenhar_circunferencia(void)
+{
+    PONTO p0, p1;
+
+    p0.x = p0.y = 0.0;
+    p1.x = p1.y = 0.8;
+
+    PONTO pc = ponto_medio(p0, p1);
+
+    float dist = distancia(p0, p1);
+    float raio = dist / 2;
+
+    PONTO *pontos = calloc(VERTICES, sizeof(PONTO));
+
+    pontos = coordenadas(VERTICES, pc, raio);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    glColor3f(0.0f, 0.0f, 1.0f);
+
+    glBegin(GL_POLYGON);
+
+    for (int i = 0; i < VERTICES; i++)
+    {
+        glColor3f(0.43f, 0.42f, 0.42f);
+        glVertex2f(pontos[i].x, pontos[i].y);
+    }
+
+    glEnd();
+    glFlush();
+}
+
+float distancia(PONTO p1, PONTO p2)
+{
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}*/
+
+void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
+{
+  //desenha borda do relogio (cinza)
+  glBegin(GL_POLYGON);
+  pontos1 = coordenadas(n, pc, modelo.raio + 0.08);
+  for (int i = 0; i < n; i++)
+  {
+    glColor3f(0.43f, 0.42f, 0.42f);
+    glVertex2f(pontos1[i].x, pontos1[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //desenha interior do relogio (branco)
+  glBegin(GL_POLYGON);
+  pontos = coordenadas(n, pc, modelo.raio);
+  for (int i = 0; i < n; i++)
+  {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex2f(pontos[i].x, pontos[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //centro do relogio (ponto central preto)
+  glBegin(GL_POLYGON);
+  pontos2 = coordenadas(n, pc, 0.02);
+  for (int i = 0; i <= n; i++)
+  {
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(pontos2[i].x, pontos2[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //desenhar traços das horas e minutos
+  retas = coordenadas_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
+  int caracter = 49, count = 0;
+  float anguloHoras = ((360.0 * M_PI / 180.0) / (float)60);
+  for (int i = 0; i < 60; i++)
+  {
+    if (i % 5 == 0)
+    {
+      if (caracter > 57)
+      {
+        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) - 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 49);
+
+        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) + 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 48 + count);
+        count++;
+      }
+      else
+      {
+        glRasterPos2f((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, caracter);
+      }
+      caracter++;
+    }
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(retas[i].p1.x, retas[i].p1.y);
+    glVertex2f(retas[i].p2.x, retas[i].p2.y);
+    glEnd();
+    glFlush();
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+}
+
+void ponteiros(PONTO pc, SEMIRETA *retas)
+{
+  refreshtime();
+  //ponteiros
+  //retas = coordenadas_ponteiros(pc, modelo.raio);
+  float angulo_horas, angulo_min;
+
+  if (modelo.hora.hor > 12)
+  {
+    modelo.hora.hor = modelo.hora.hor - 12;
+  }
+  float anguloHoras = ((360.0 * M_PI / 180.0) / (float)12);
+  float anguloMinSec = ((360.0 * M_PI / 180.0) / (float)60);
+
+  //horas
+  glLineWidth(4.0);
+  glBegin(GL_LINES);
+  glVertex2f(pc.x, pc.y);
+  glVertex2f((modelo.raio - 0.27) * cos(-anguloHoras * modelo.hora.hor + (M_PI) / 2) + pc.x, (modelo.raio - 0.27) * sin(-anguloHoras * modelo.hora.hor + (M_PI) / 2) + pc.y);
+  glEnd();
+  glFlush();
+
+  //minutos
+  glLineWidth(2.0);
+  glBegin(GL_LINES);
+  glVertex2f(pc.x, pc.y);
+  glVertex2f((modelo.raio - 0.20) * cos(-anguloMinSec * modelo.hora.min + (M_PI) / 2) + pc.x, (modelo.raio - 0.20) * sin(-anguloMinSec * modelo.hora.min + (M_PI) / 2) + pc.y);
+  glEnd();
+  glFlush();
+
+  //segundos
+  glLineWidth(1);
+  glBegin(GL_LINES);
+  glVertex2f(pc.x, pc.y);
+  glVertex2f((modelo.raio - 0.15) * cos(-anguloMinSec * modelo.hora.seg + (M_PI) / 2) + pc.x, (modelo.raio - 0.15) * sin(-anguloMinSec * modelo.hora.seg + (M_PI) / 2) + pc.y);
+  glEnd();
+  glFlush();
+}
+
+void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
+{
+  //desenha borda do relogio (cinza)
+  glBegin(GL_POLYGON);
+  pontos1 = coordenadas(n, pc, modelo.raio + 0.08);
+  for (int i = 0; i < n; i++)
+  {
+    glColor3f(0.43f, 0.42f, 0.42f);
+    glVertex2f(pontos1[i].x, pontos1[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //desenha interior do relogio (branco)
+  glBegin(GL_POLYGON);
+  pontos = coordenadas(n, pc, modelo.raio);
+  for (int i = 0; i < n; i++)
+  {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex2f(pontos[i].x, pontos[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //centro do relogio (ponto central preto)
+  glBegin(GL_POLYGON);
+  pontos2 = coordenadas(n, pc, 0.02);
+  for (int i = 0; i <= n; i++)
+  {
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(pontos2[i].x, pontos2[i].y);
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
+
+  //desenhar traços das horas e minutos
+  retas = coordenadas_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
+  int caracter = 49, count = 0;
+  float anguloHoras = ((360.0 * M_PI / 180.0) / (float)60);
+  for (int i = 0; i < 60; i++)
+  {
+    if (i % 5 == 0)
+    {
+      if (caracter > 57)
+      {
+        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) - 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 49);
+
+        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) + 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 48 + count);
+        count++;
+      }
+      else
+      {
+        glRasterPos2f((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, caracter);
+      }
+      caracter++;
+    }
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex2f(retas[i].p1.x, retas[i].p1.y);
+    glVertex2f(retas[i].p2.x, retas[i].p2.y);
+    glEnd();
+    glFlush();
+    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+  }
+}
+
 
 /**************************************
 ************ FUNÇÃO MAIN **************
