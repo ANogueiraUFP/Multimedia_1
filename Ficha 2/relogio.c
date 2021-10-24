@@ -3,23 +3,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include "glm.h"
 
-#if defined(__APPLE__) || defined(MACOSX)
-#include <GLUT/glut.h>
-#else
 #include <GL/glut.h>
-#endif
-
-//#define VERTICES 20 
-
-/**************************************
-************* CONSTANTE PI ************
-**************************************/
-  
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
 
 /**************************************
 * AUXILIARES CONVERSÃO GRAUS-RADIANOS *
@@ -53,6 +38,16 @@ typedef struct
   Horas hora;
 } Modelo;
 
+typedef struct ponto
+{
+  float x, y;
+} PONTO;
+
+typedef struct semireta
+{
+  PONTO p1, p2;
+} SEMIRETA;
+
 Estado estado;
 Modelo modelo;
 
@@ -63,21 +58,12 @@ Modelo modelo;
 void init(void)
 {
 
-  struct tm *current_time;
-  time_t timer = time(0);
-
   /* Delay para o timer */
   estado.delay = 1000;
 
   modelo.tamLado = 1;
   modelo.numLados = 60;
   modelo.raio = 0.75;
-
-  /* Ler hora do Sistema */
-  current_time = localtime(&timer);
-  modelo.hora.hor = current_time->tm_hour;
-  modelo.hora.min = current_time->tm_min;
-  modelo.hora.seg = current_time->tm_sec;
 
   glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -89,7 +75,17 @@ void init(void)
 /**************************************
 ***** CALL BACKS DE JANELA/DESENHO ****
 **************************************/
+void refreshtime(void)
+{
+  struct tm *current_time;
+  time_t timer = time(0);
 
+  /* Ler hora do Sistema */
+  current_time = localtime(&timer);
+  modelo.hora.hor = current_time->tm_hour;
+  modelo.hora.min = current_time->tm_min;
+  modelo.hora.seg = current_time->tm_sec;
+}
 /* Callback para redimensionar janela */
 void reshape(int width, int height)
 {
@@ -119,38 +115,21 @@ void reshape(int width, int height)
   glLoadIdentity();
 }
 
-
 /**************************************
 ** ESPAÇO PARA DEFINIÇÃO DAS ROTINAS **
 ****** AUXILIARES DE DESENHO ... ******
 **************************************/
 
-
 /* Callback de desenho */
 void draw(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
-  
-  /* Espaço para chamada das rotinas auxiliares de desenho ... */
-
-
-  glBegin(GL_POLYGON);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex2f(modelo.tamLado / 2, modelo.tamLado / 2);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex2f(-modelo.tamLado / 2, modelo.tamLado / 2);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex2f(-modelo.tamLado / 2, -modelo.tamLado / 2);
-    glColor3f(1.0f, 0.0f, 1.0f);
-    glVertex2f(modelo.tamLado / 2, -modelo.tamLado / 2);
-  glEnd();
 
   glFlush();
 
   if (estado.doubleBuffer)
     glutSwapBuffers();
 }
-
 
 /**************************************
 ******** CALLBACKS TIME/IDLE **********
@@ -181,12 +160,11 @@ void timer(int value)
 *********** FUNÇÃO AJUDA **************
 **************************************/
 
-void imprime_ajuda(void)
+void menu(void)
 {
-  printf("\n\nDesenho de um quadrado\n");
-  printf("h,H - Ajuda \n");
-  printf("+   - Aumentar tamanho do Lado\n");
-  printf("-   - Diminuir tamanho do Lado\n");
+  printf("\n\nDesenho de um poligono\n");
+  printf("+   - Aumentar velocidade\n");
+  printf("-   - Diminuir velocidade\n");
   printf("ESC - Sair\n");
 }
 
@@ -203,24 +181,14 @@ void key(unsigned char key, int x, int y)
     exit(1);
     /* Ações sobre outras teclas */
 
-  case 'h':
-  case 'H':
-    imprime_ajuda();
+  case '+':
+    
+    //estado.delay=50;
+    //modelo.hora.hor=modelo.hora.hor +50;
     break;
 
-  case '+':
-    if (modelo.tamLado < 1.8)
-    {
-      modelo.tamLado += 0.05;
-      glutPostRedisplay(); 
-    }
-    break;
   case '-':
-    if (modelo.tamLado > 0.2)
-    {
-      modelo.tamLado -= 0.05;
-      glutPostRedisplay(); 
-    }
+    
     break;
   }
 
@@ -228,174 +196,62 @@ void key(unsigned char key, int x, int y)
     printf("Carregou na tecla %c\n", key);
 }
 
-/* Callback para interação via teclado (largar a tecla) */
-void keyUp(unsigned char key, int x, int y)
+PONTO ponto_medio(PONTO p1, PONTO p2)
 {
-  if (DEBUG)
-    printf("Largou a tecla %c\n", key);
-}
-
-/* Callback para interacção via teclas especiais (carregar na tecla) */
-void specialKey(int key, int x, int y)
-{
-  /* Ações sobre outras teclas especiais
-      GLUT_KEY_F1 ... GLUT_KEY_F12
-      GLUT_KEY_UP
-      GLUT_KEY_DOWN
-      GLUT_KEY_LEFT
-      GLUT_KEY_RIGHT
-      GLUT_KEY_PAGE_UP
-      GLUT_KEY_PAGE_DOWN
-      GLUT_KEY_HOME
-      GLUT_KEY_END
-      GLUT_KEY_INSERT */
-
-  switch (key)
-  {
-    /* Redesenhar o ecrã */
-    //glutPostRedisplay();
-  }
-
-  if (DEBUG)
-    printf("Carregou na tecla especial %d\n", key);
-}
-
-/* Callback para interação via teclas especiais (largar a tecla) */
-void specialKeyUp(int key, int x, int y)
-{
-
-  if (DEBUG)
-    printf("Largou a tecla especial %d\n", key);
-}
-
-void poligono(GLint n, GLfloat x0, GLfloat y0, GLfloat r)
-{
-  // podemos aqui ter como base a void desenhar_circunferencia abaixo?
-}
-
-/*PONTO ponto_medio(PONTO p1, PONTO p2)
-{
-    PONTO paux;
-    paux.x = p1.x + p2.x / 2;
-    paux.y = p1.y + p2.y / 2;
-    return paux;
-}
-
-void desenhar_circunferencia(void)
-{
-    PONTO p0, p1;
-
-    p0.x = p0.y = 0.0;
-    p1.x = p1.y = 0.8;
-
-    PONTO pc = ponto_medio(p0, p1);
-
-    float dist = distancia(p0, p1);
-    float raio = dist / 2;
-
-    PONTO *pontos = calloc(VERTICES, sizeof(PONTO));
-
-    pontos = coordenadas(VERTICES, pc, raio);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    glColor3f(0.0f, 0.0f, 1.0f);
-
-    glBegin(GL_POLYGON);
-
-    for (int i = 0; i < VERTICES; i++)
-    {
-        glColor3f(0.43f, 0.42f, 0.42f);
-        glVertex2f(pontos[i].x, pontos[i].y);
-    }
-
-    glEnd();
-    glFlush();
+  PONTO paux;
+  paux.x = p1.x + p2.x / 2;
+  paux.y = p1.y + p2.y / 2;
+  return paux;
 }
 
 float distancia(PONTO p1, PONTO p2)
 {
-    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
-}*/
+  return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
 
-void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
+PONTO *poligono(int n, PONTO pc, float raio)
 {
-  //desenha borda do relogio (cinza)
-  glBegin(GL_POLYGON);
-  pontos1 = coordenadas(n, pc, modelo.raio + 0.08);
-  for (int i = 0; i < n; i++)
+  PONTO *pontos = calloc(n, sizeof(PONTO));
+  float angulo = (360.0 * M_PI / 180.0) / (float)n;
+  float a = 0.0;
+  for (int i = 0; i < n; i++, a += angulo)
   {
-    glColor3f(0.43f, 0.42f, 0.42f);
-    glVertex2f(pontos1[i].x, pontos1[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+    pontos[i].x = raio * cos(a) + pc.x;
+    pontos[i].y = raio * sin(a) + pc.y;
   }
-  glEnd();
-  glFlush();
+  return pontos;
+}
 
-  //desenha interior do relogio (branco)
-  glBegin(GL_POLYGON);
-  pontos = coordenadas(n, pc, modelo.raio);
-  for (int i = 0; i < n; i++)
+/**
+ * Retorna um array com poligono de varias retas, neste caso utilizadas para marcar os traços das horas e dos minutos
+ * */
+SEMIRETA *poligono_semireta(PONTO pc, float raio)
+{
+  SEMIRETA *retas = (SEMIRETA *)calloc(60, sizeof(SEMIRETA));
+  float angulo = (360.0 * M_PI / 180.0) / (float)60;
+  float a = 0.0;
+  for (int i = 0; i < 60; i++, a += angulo)
   {
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glVertex2f(pontos[i].x, pontos[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
-  }
-  glEnd();
-  glFlush();
+    retas[i].p1.x = raio * cos(a) + pc.x;
+    retas[i].p1.y = raio * sin(a) + pc.y;
 
-  //centro do relogio (ponto central preto)
-  glBegin(GL_POLYGON);
-  pontos2 = coordenadas(n, pc, 0.02);
-  for (int i = 0; i <= n; i++)
-  {
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glVertex2f(pontos2[i].x, pontos2[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
-  }
-  glEnd();
-  glFlush();
-
-  //desenhar traços das horas e minutos
-  retas = coordenadas_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
-  int caracter = 49, count = 0;
-  float anguloHoras = ((360.0 * M_PI / 180.0) / (float)60);
-  for (int i = 0; i < 60; i++)
-  {
     if (i % 5 == 0)
     {
-      if (caracter > 57)
-      {
-        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) - 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 49);
-
-        glRasterPos2f(((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x) + 0.02, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 48 + count);
-        count++;
-      }
-      else
-      {
-        glRasterPos2f((modelo.raio - 0.18) * cos(-anguloHoras * i + (M_PI) / 3) + pc.x, (modelo.raio - 0.18) * sin(-anguloHoras * i + (M_PI) / 3) + pc.y);
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, caracter);
-      }
-      caracter++;
+      retas[i].p2.x = (raio - 0.12) * cos(a) + pc.x;
+      retas[i].p2.y = (raio - 0.12) * sin(a) + pc.y;
     }
-
-    glBegin(GL_LINES);
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glVertex2f(retas[i].p1.x, retas[i].p1.y);
-    glVertex2f(retas[i].p2.x, retas[i].p2.y);
-    glEnd();
-    glFlush();
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
+    else
+    {
+      retas[i].p2.x = (raio - 0.08) * cos(a) + pc.x;
+      retas[i].p2.y = (raio - 0.08) * sin(a) + pc.y;
+    }
   }
+  return retas;
 }
 
 void ponteiros(PONTO pc, SEMIRETA *retas)
 {
   refreshtime();
-  //ponteiros
-  //retas = coordenadas_ponteiros(pc, modelo.raio);
   float angulo_horas, angulo_min;
 
   if (modelo.hora.hor > 12)
@@ -432,44 +288,41 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
 
 void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
 {
-  //desenha borda do relogio (cinza)
+  //desenha contorno do relogio (cinza)
   glBegin(GL_POLYGON);
-  pontos1 = coordenadas(n, pc, modelo.raio + 0.08);
+  pontos1 = poligono(n, pc, modelo.raio + 0.08);
   for (int i = 0; i < n; i++)
   {
     glColor3f(0.43f, 0.42f, 0.42f);
     glVertex2f(pontos1[i].x, pontos1[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
   }
   glEnd();
   glFlush();
 
   //desenha interior do relogio (branco)
   glBegin(GL_POLYGON);
-  pontos = coordenadas(n, pc, modelo.raio);
+  pontos = poligono(n, pc, modelo.raio);
   for (int i = 0; i < n; i++)
   {
     glColor3f(1.0f, 1.0f, 1.0f);
     glVertex2f(pontos[i].x, pontos[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
   }
   glEnd();
   glFlush();
 
-  //centro do relogio (ponto central preto)
+  //centro do relogio
   glBegin(GL_POLYGON);
-  pontos2 = coordenadas(n, pc, 0.02);
+  pontos2 = poligono(n, pc, 0.02);
   for (int i = 0; i <= n; i++)
   {
     glColor3f(0.0f, 0.0f, 0.0f);
     glVertex2f(pontos2[i].x, pontos2[i].y);
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
   }
   glEnd();
   glFlush();
 
-  //desenhar traços das horas e minutos
-  retas = coordenadas_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
+  //desenhar traços horas + minutos
+  retas = poligono_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
   int caracter = 49, count = 0;
   float anguloHoras = ((360.0 * M_PI / 180.0) / (float)60);
   for (int i = 0; i < 60; i++)
@@ -499,10 +352,23 @@ void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos
     glVertex2f(retas[i].p2.x, retas[i].p2.y);
     glEnd();
     glFlush();
-    // printf("Ponto[%d]-->(%d, %d)\n", i, pontos[i].x, pontos[i].y);
   }
 }
 
+void desenhar_relogio(void)
+{
+  int n = 360;
+  PONTO p0, p1, pc, *pontos, *pontos1, *pontos2;
+  SEMIRETA *retas;
+  p0.x = p0.y = 0;
+  p1.x = p1.y = 0;
+  pc = ponto_medio(p0, p1);
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
+  ponteiros(pc, retas);
+}
 
 /**************************************
 ************ FUNÇÃO MAIN **************
@@ -514,20 +380,19 @@ int main(int argc, char **argv)
 
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(300, 300);
+  glutInitWindowSize(700, 700);
   glutInitDisplayMode(((estado.doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE) | GLUT_RGB);
-  if (glutCreateWindow("Exemplo") == GL_FALSE)
+  if (glutCreateWindow("Relógio") == GL_FALSE)
     exit(1);
 
-  init();
-
-  imprime_ajuda();
+   init();
+  menu();
 
   /* Registar callbacks do GLUT */
 
   /* callbacks de janelas/desenho */
   glutReshapeFunc(reshape);
-  glutDisplayFunc(draw);
+  glutDisplayFunc(desenhar_relogio);
 
   /* Callbacks de teclado */
   glutKeyboardFunc(key);
@@ -536,8 +401,8 @@ int main(int argc, char **argv)
   //glutSpecialUpFunc(specialKeyUp);
 
   /* Callbacks timer/idle */
-  //glutTimerFunc(estado.delay, timer, 0);
-  //glutIdleFunc(idle);
+  glutTimerFunc(estado.delay, timer, 0);
+  glutIdleFunc(idle);
 
   /* Começar loop */
   glutMainLoop();

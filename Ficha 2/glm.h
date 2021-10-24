@@ -11,13 +11,11 @@
 
  */
 
-
 #if defined(__APPLE__) || defined(MACOSX)
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
-
 
 #ifndef M_PI
 #define M_PI 3.14159265f
@@ -30,20 +28,15 @@
 #define GLM_COLOR    (1 << 3)       /* render with colors */
 #define GLM_MATERIAL (1 << 4)       /* render with materials */
 
-/* worksheet 1
- */
 typedef struct ponto
 {
-  float x,y;        
+  float x, y;
 } PONTO;
 
-PONTO ponto_medio(PONTO p1, PONTO p2);
-
-void desenhar_circunferencia(void);
-
-float distancia(PONTO p1, PONTO p2);
-
-PONTO *coordenadas(int n, PONTO pc, float raio);
+typedef struct semireta
+{
+  PONTO p1, p2;
+} SEMIRETA;
 
 /* GLMmaterial: Structure that defines a material in a model. 
  */
