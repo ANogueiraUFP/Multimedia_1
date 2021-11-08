@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include "glm.h"
 
-#include <GL/glut.h>
 
 /**************************************
 * AUXILIARES CONVERSÃO GRAUS-RADIANOS *
@@ -37,16 +37,6 @@ typedef struct
   GLfloat tamLado;
   Horas hora;
 } Modelo;
-
-typedef struct ponto
-{
-  float x, y;
-} PONTO;
-
-typedef struct semireta
-{
-  PONTO p1, p2;
-} SEMIRETA;
 
 Estado estado;
 Modelo modelo;
