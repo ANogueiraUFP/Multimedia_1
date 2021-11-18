@@ -19,8 +19,8 @@
 #endif
 
 /**************************************
-* AUXILIARES CONVERSÃO GRAUS-RADIANOS *
-**************************************/
+ * AUXILIARES CONVERSÃO GRAUS-RADIANOS *
+ **************************************/
 
 #define RAD(x) (M_PI * (x) / 180)
 #define GRAUS(x) (180 * (x) / M_PI)
@@ -30,35 +30,36 @@
 **************************************/
 
 #define DEBUG 1
-#define LADO_MAXIMO     2
-#define LADO_MINIMO     0.3
-#define DELTA_LADO      0.1
+#define LADO_MAXIMO 2
+#define LADO_MINIMO 0.3
+#define DELTA_LADO 0.1
 
 /**************************************
 ********** VARIÁVEIS GLOBAIS **********
 **************************************/
 
-typedef struct {
-  GLboolean   doubleBuffer;
-  GLint       delayMovimento;
-  GLboolean   debug;
-  GLboolean   movimentoTranslacao;      // se os cubinhos se movem
-  GLboolean   movimentoRotacao;         // se o cubo grande roda;
-}Estado;
+typedef struct
+{
+  GLboolean doubleBuffer;
+  GLint delayMovimento;
+  GLboolean debug;
+  GLboolean movimentoTranslacao; // se os cubinhos se movem
+  GLboolean movimentoRotacao;    // se o cubo grande roda;
+} Estado;
 
+typedef struct
+{
+  GLfloat theta[3]; // 0-Rotação em X; 1-Rotação em Y; 2-Rotação em Z
 
-typedef struct {
-  GLfloat   theta[3];     // 0-Rotação em X; 1-Rotação em Y; 2-Rotação em Z
-  
-  GLint     eixoRodar;    // eixo que está a rodar (mudar com o rato)
-  GLfloat   ladoCubo;     // comprimento do lado do cubo
-  GLfloat   deltaRotacao; // incremento a fazer ao angulo quando roda
-  GLboolean sentidoTranslacao; //sentido da translação dos cubos pequenos
-  GLfloat   translacaoCubo; //
-  GLfloat   deltaTranslacao; // incremento a fazer na translacao
-  GLboolean sentidoRotacao;  //sentido da rotação dos cubos pequenos
-  GLfloat   thetaCubo;     // Rotação dos cubinhos
-}Modelo;
+  GLint eixoRodar;             // eixo que está a rodar (mudar com o rato)
+  GLfloat ladoCubo;            // comprimento do lado do cubo
+  GLfloat deltaRotacao;        // incremento a fazer ao angulo quando roda
+  GLboolean sentidoTranslacao; // sentido da translação dos cubos pequenos
+  GLfloat translacaoCubo;      //
+  GLfloat deltaTranslacao;     // incremento a fazer na translacao
+  GLboolean sentidoRotacao;    // sentido da rotação dos cubos pequenos
+  GLfloat thetaCubo;           // Rotação dos cubinhos
+} Modelo;
 
 Estado estado;
 Modelo modelo;
@@ -69,15 +70,15 @@ Modelo modelo;
 
 void inicia_modelo()
 {
-  estado.delayMovimento=50;
-  estado.movimentoTranslacao=GL_FALSE;
-  estado.movimentoRotacao=GL_FALSE;
+  estado.delayMovimento = 50;
+  estado.movimentoTranslacao = GL_FALSE;
+  estado.movimentoRotacao = GL_FALSE;
 
-  modelo.theta[0]=0;
-  modelo.theta[1]=0;
-  modelo.theta[2]=0;
-  modelo.eixoRodar=0;  // eixo de X;
-  modelo.ladoCubo=1;
+  modelo.theta[0] = 0;
+  modelo.theta[1] = 0;
+  modelo.theta[2] = 0;
+  modelo.eixoRodar = 0; // eixo de X;
+  modelo.ladoCubo = 1;
 }
 
 void init(void)
@@ -87,8 +88,7 @@ void init(void)
   glEnable(GL_POINT_SMOOTH);
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_POLYGON_SMOOTH);
-  //glEnable(GL_DEPTH_TEST);
-
+  // glEnable(GL_DEPTH_TEST);
 }
 
 /**************************************
@@ -98,15 +98,15 @@ void init(void)
 /* Callback para redimensionar janela */
 void reshape(int width, int height)
 {
-  glViewport(0, 0, (GLint) width, (GLint) height);  
+  glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  glLoadIdentity
+  ();
   if (width < height)
-     glOrtho(-5, 5, -5*(GLdouble)height/width, 5*(GLdouble)height/width,-10,10);
+    glOrtho(-5, 5, -5 * (GLdouble)height / width, 5 * (GLdouble)height / width, -10, 10);
   else
-     glOrtho(-5*(GLdouble)width/height, 5*(GLdouble)width/height,-5, 5, -10,10);
+    glOrtho(-5 * (GLdouble)width / height, 5 * (GLdouble)width / height, -5, 5, -10, 10);
 
-   
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -116,35 +116,53 @@ void reshape(int width, int height)
 ****** AUXILIARES DE DESENHO ... ******
 **************************************/
 
-void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat  d[], GLfloat cor[])
+void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat d[], GLfloat cor[])
 {
   /* draw a polygon via list of vertices */
 
   glBegin(GL_POLYGON);
-    glColor3fv(cor);
-    glVertex3fv(a);
-    glVertex3fv(b);
-    glVertex3fv(c);
-    glVertex3fv(d);
+  glColor3fv(cor);
+  glVertex3fv(a);
+  glVertex3fv(b);
+  glVertex3fv(c);
+  glVertex3fv(d);
   glEnd();
 }
 
 void cubo()
 {
- GLfloat vertices[][3] = {{-0.5,-0.5,-0.5}, 
-                          {0.5,-0.5,-0.5}, 
-                          {0.5,0.5,-0.5}, 
-                          {-0.5,0.5,-0.5}};
+  // GLfloat vertices[][3] = {{-0.5,-0.5,-0.5},
+  //                        {0.5,-0.5,-0.5},
+  //                      {0.5,0.5,-0.5},
+  //                    {-0.5,0.5,-0.5}};
 
-  GLfloat cores[][3] = {{0.0,1.0,1.0},
-                        {1.0,0.0,0.0},
-                        {1.0,1.0,0.0}, 
-                        {0.0,1.0,0.0}, 
-                        {1.0,0.0,1.0}, 
-                        {0.0,0.0,1.0}, 
-                        {1.0,1.0,1.0}};
+  // EXEMPLO
+  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5},
+                           {0.5, -0.5, -0.5},
+                           {0.5, 0.5, -0.5},
+                           {-0.5, 0.5, -0.5},
+                           {-0.5, -0.5, 0.5},
+                           {-0.5, 0.5, 0.5},
+                           {0.5, 0.5, 0.5},
+                           {0.5, -0.5, 0.5}};
 
-  desenhaPoligono(vertices[1],vertices[0],vertices[3],vertices[2],cores[0]);
+  GLfloat cores[][3] = {{0.0, 1.0, 1.0},
+                        {1.0, 0.0, 0.0},
+                        {1.0, 1.0, 0.0},
+                        {0.0, 1.0, 0.0},
+                        {1.0, 0.0, 1.0},
+                        {0.0, 0.0, 1.0},
+                        {1.0, 1.0, 1.0}};
+
+  desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], cores[0]);
+
+  // EXEMPLO
+  desenhaPoligono(vertices[2], vertices[3], vertices[5], vertices[6], cores[5]);
+  desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], cores[3]);
+  desenhaPoligono(vertices[0], vertices[3], vertices[5], vertices[4], cores[1]);
+  desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], cores[0]);
+  desenhaPoligono(vertices[0], vertices[1], vertices[7], vertices[4], cores[4]);
+  desenhaPoligono(vertices[1], vertices[2], vertices[6], vertices[7], cores[2]);
 }
 
 // ... Definição das rotinas auxiliares de desenho ...
@@ -157,13 +175,12 @@ void draw(void)
   // ... chamada das rotinas auxiliares de desenho ...
 
   glPushMatrix();
-    glRotatef(modelo.theta[0],1,0,0);
-    glRotatef(modelo.theta[1],0,1,0);
-    glRotatef(modelo.theta[2],0,0,1);
-    glScalef(modelo.ladoCubo,modelo.ladoCubo,modelo.ladoCubo);
-    cubo();
+  glRotatef(modelo.theta[0], 1, 0, 0);
+  glRotatef(modelo.theta[1], 0, 1, 0);
+  glRotatef(modelo.theta[2], 0, 0, 1);
+  glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
+  cubo();
   glPopMatrix();
-
 
   if (estado.doubleBuffer)
     glutSwapBuffers();
@@ -193,11 +210,13 @@ void timer(int value)
 
   // alterar o modelo.theta[] usando a variável modelo.eixoRodar como indice
 
-  
+  // EXEMPLO
+  // FAZ RODAR O CUBO
+  modelo.theta[modelo.eixoRodar] += 5;
+
   /* redesenhar o ecrã */
   glutPostRedisplay();
 }
-
 
 /**************************************
 *********** FUNÇÃO AJUDA **************
@@ -217,7 +236,6 @@ void imprime_ajuda(void)
   printf("p,p - Iniciar/Parar movimento dos cubinhos\n");
   printf("ESC - Sair\n");
   printf("teclas do rato para iniciar/parar rotação e alternar eixos\n");
-
 }
 
 /**************************************
@@ -227,52 +245,52 @@ void imprime_ajuda(void)
 /* Callback para interação via teclado (carregar na tecla) */
 void key(unsigned char key, int x, int y)
 {
-  switch (key) {
-    case 27:
-      exit(1);
+  switch (key)
+  {
+  case 27:
+    exit(1);
     /* ... accoes sobre outras teclas ... */
 
-    case 'h' :
-    case 'H' :
-                imprime_ajuda();
-            break;
-    case '+':
-            if(modelo.ladoCubo<LADO_MAXIMO)
-            {
-              modelo.ladoCubo+=DELTA_LADO;
-              glutPostRedisplay();
-            }
-          break;
+  case 'h':
+  case 'H':
+    imprime_ajuda();
+    break;
+  case '+':
+    if (modelo.ladoCubo < LADO_MAXIMO)
+    {
+      modelo.ladoCubo += DELTA_LADO;
+      glutPostRedisplay();
+    }
+    break;
 
-    case '-':
-            if(modelo.ladoCubo>LADO_MINIMO)
-            {
-              modelo.ladoCubo-=DELTA_LADO;
-              glutPostRedisplay();
-            }
-          break;
+  case '-':
+    if (modelo.ladoCubo > LADO_MINIMO)
+    {
+      modelo.ladoCubo -= DELTA_LADO;
+      glutPostRedisplay();
+    }
+    break;
 
-    case 'i' :
-    case 'I' :
-            inicia_modelo();
-            glutPostRedisplay();
-          break;
-    case 'p' :
-    case 'P' :
-            estado.movimentoTranslacao=!estado.movimentoTranslacao;
-          break;
-
+  case 'i':
+  case 'I':
+    inicia_modelo();
+    glutPostRedisplay();
+    break;
+  case 'p':
+  case 'P':
+    estado.movimentoTranslacao = !estado.movimentoTranslacao;
+    break;
   }
 
-  if(DEBUG)
-    printf("Carregou na tecla %c\n",key);
+  if (DEBUG)
+    printf("Carregou na tecla %c\n", key);
 }
 
 /* Callback para interação via teclado (largar a tecla) */
 void keyUp(unsigned char key, int x, int y)
 {
-  if(DEBUG)
-    printf("Largou a tecla %c\n",key);
+  if (DEBUG)
+    printf("Largou a tecla %c\n", key);
 }
 
 /* Callback para interacção via teclas especiais (carregar na tecla) */
@@ -292,12 +310,12 @@ void specialKey(int key, int x, int y)
 
   switch (key)
   {
-    /* Redesenhar o ecrã */
-    //glutPostRedisplay();
-    case GLUT_KEY_F1 :
-            inicia_modelo();
-            glutPostRedisplay();
-        break;
+  /* Redesenhar o ecrã */
+  // glutPostRedisplay();
+  case GLUT_KEY_F1:
+    inicia_modelo();
+    glutPostRedisplay();
+    break;
   }
 
   if (DEBUG)
@@ -318,24 +336,22 @@ void specialKeyUp(int key, int x, int y)
 
 void mouseMotion(int x, int y)
 {
-    /* x,y    => coordenadas do ponteiro quando se move no rato
-                 a carregar em teclas
-    */
+  /* x,y    => coordenadas do ponteiro quando se move no rato
+               a carregar em teclas
+  */
 
-  if(DEBUG)
-    printf("Mouse Motion %d %d\n",x,y);
-
+  if (DEBUG)
+    printf("Mouse Motion %d %d\n", x, y);
 }
 
 void mousePassiveMotion(int x, int y)
 {
-    /* x,y    => coordenadas do ponteiro quando se move no rato
-                 sem estar a carregar em teclas
-    */
+  /* x,y    => coordenadas do ponteiro quando se move no rato
+               sem estar a carregar em teclas
+  */
 
-  if(DEBUG)
-    printf("Mouse Passive Motion %d %d\n",x,y);
-
+  if (DEBUG)
+    printf("Mouse Passive Motion %d %d\n", x, y);
 }
 
 void mouse(int button, int state, int x, int y)
@@ -347,25 +363,34 @@ void mouse(int button, int state, int x, int y)
 
   // alterar o eixo que roda (variável modelo.eixoRodar)
 
-  switch(button){
-    case GLUT_LEFT_BUTTON :      
-      if(state == GLUT_DOWN)
-      {        
-      }
-     break;
-    case GLUT_MIDDLE_BUTTON :      
-      if(state == GLUT_DOWN)
-      {        
-      }
-      break;
-    case GLUT_RIGHT_BUTTON :
-      if(state == GLUT_DOWN)
-      {        
-      }
-      break;
+  switch (button)
+  {
+  case GLUT_LEFT_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // EXEMPLO
+      modelo.eixoRodar = 0;
+    }
+    break;
+  case GLUT_MIDDLE_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // EXEMPLO
+
+      modelo.eixoRodar = 1;
+    }
+    break;
+  case GLUT_RIGHT_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // EXEMPLO
+
+      modelo.eixoRodar = 2;
+    }
+    break;
   }
-  if(DEBUG)
-    printf("Mouse button:%d state:%d coord:%d %d\n",button,state,x,y);
+  if (DEBUG)
+    printf("Mouse button:%d state:%d coord:%d %d\n", button, state, x, y);
 }
 
 /**************************************
@@ -378,7 +403,7 @@ int main(int argc, char **argv)
 
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(400,400);
+  glutInitWindowSize(400, 400);
   glutInitDisplayMode(((estado.doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE) | GLUT_RGB);
   if (glutCreateWindow("Cubo") == GL_FALSE)
     exit(1);
@@ -395,18 +420,18 @@ int main(int argc, char **argv)
 
   // Callbacks de teclado
   glutKeyboardFunc(key);
-  //glutKeyboardUpFunc(keyUp);
+  // glutKeyboardUpFunc(keyUp);
   glutSpecialFunc(specialKey);
-  //glutSpecialUpFunc(SpecialKeyUp);
+  // glutSpecialUpFunc(SpecialKeyUp);
 
   // Callbacks do rato
-  //glutPassiveMotionFunc(MousePassiveMotion);
-  //glutMotionFunc(MouseMotion);
+  // glutPassiveMotionFunc(MousePassiveMotion);
+  // glutMotionFunc(MouseMotion);
   glutMouseFunc(mouse);
 
   // Callbacks timer/idle
   glutTimerFunc(estado.delayMovimento, timer, 0);
-  //glutIdleFunc(Idle);
+  // glutIdleFunc(Idle);
 
   // Começar
   glutMainLoop();
