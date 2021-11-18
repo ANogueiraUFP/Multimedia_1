@@ -183,7 +183,7 @@ void draw(void)
   // o tamanho do cubo usando a instrução glScalef(...) na função draw()
   // template já com as teclas no switch case da função key... dúvida a perguntar
 
-  // void glPolygonMode(	GLenum face, GLenum mode);
+  // void glPolygonMode(GLenum face, GLenum mode);
   // face: Specifies the polygons that mode applies to. Must be GL_FRONT_AND_BACK for front- and back-facing polygons.
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
     
@@ -447,3 +447,20 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+
+
+
+
+
+// Perguntas Enunciado
+
+// 1.1/1.2/1.3/1.4/1.5 FEITO
+// 1.6 linha 171 a 180, não entendo muito bem o pretendido... já alterei os valores e nada
+// 1.7/1.8 FEITO
+// 1.9 acho que já está feito com o template do prof... linha 182-184
+// 1.10 linha 186-190
+// 1.11 (linha 201-204) por fazer
+// 1.12/13/14/15 por fazer
+// do que está feito, não me parece complicado
+// se conseguisses a 1.11 + 1.12 acho que já ficava mais jeitoso  
