@@ -38,7 +38,8 @@
 ********** VARIÁVEIS GLOBAIS **********
 **************************************/
 
-typedef struct {
+typedef struct
+{
   GLboolean doubleBuffer;
   GLint delayMovimento;
   GLboolean debug;
@@ -46,7 +47,8 @@ typedef struct {
   GLboolean movimentoRotacao;    // se o cubo grande roda;
 } Estado;
 
-typedef struct {
+typedef struct
+{
   GLfloat theta[3]; // 0-Rotação em X; 1-Rotação em Y; 2-Rotação em Z
 
   GLint eixoRodar;             // eixo que está a rodar (mudar com o rato)
@@ -61,6 +63,12 @@ typedef struct {
 
 Estado estado;
 Modelo modelo;
+float w, h, tip = 3, turn = 2;
+float ORG[3] = {0, 0, 0};
+
+float XP[3] = {1, 0, 0}, XN[3] = {-1, 0, 0},
+      YP[3] = {0, 1, 0}, YN[3] = {0, -1, 0},
+      ZP[3] = {0, 0, 1}, ZN[3] = {0, 0, -1};
 
 /**************************************
 *** INICIALIZAÇÃO DO AMBIENTE OPENGL **
@@ -98,8 +106,7 @@ void reshape(int width, int height)
 {
   glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);
-  glLoadIdentity
-  ();
+  glLoadIdentity();
   if (width < height)
     glOrtho(-5, 5, -5 * (GLdouble)height / width, 5 * (GLdouble)height / width, -10, 10);
   else
@@ -129,15 +136,15 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat d[], GLfloat
 
 void cubo()
 {
-  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5}, //0
-                           {0.5, -0.5, -0.5}, //1
-                           {0.5, 0.5, -0.5}, //2
-                           {-0.5, 0.5, -0.5}, //3
+  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5}, // 0
+                           {0.5, -0.5, -0.5},  // 1
+                           {0.5, 0.5, -0.5},   // 2
+                           {-0.5, 0.5, -0.5},  // 3
 
-                           {-0.5, -0.5, 0.5}, //4
-                           {-0.5, 0.5, 0.5}, //7
-                           {0.5, 0.5, 0.5}, //6
-                           {0.5, -0.5, 0.5}}; //5
+                           {-0.5, -0.5, 0.5}, // 4
+                           {-0.5, 0.5, 0.5},  // 7
+                           {0.5, 0.5, 0.5},   // 6
+                           {0.5, -0.5, 0.5}}; // 5
 
   GLfloat cores[][3] = {{0.0, 1.0, 1.0},
                         {1.0, 0.0, 0.0},
@@ -156,10 +163,36 @@ void cubo()
 }
 
 // ... Definição das rotinas auxiliares de desenho ...
+void eixos(void)
+{
 
+  glPushMatrix();
+
+  glTranslatef(3, 3, 3);
+  glRotatef(30, 1, 0, 0);
+  glRotatef(-30, 0, 1, 0);
+    glRotatef(0, 0, 0, 1);
+  glScalef(1, 1, 1);
+
+  glLineWidth(2.0);
+
+  glBegin(GL_LINES);
+  glColor3f(1, 0, 0); // X axis is red.
+  glVertex3fv(ORG);
+  glVertex3fv(XP);
+  glColor3f(0, 1, 0); // Y axis is green.
+  glVertex3fv(ORG);
+  glVertex3fv(YP);
+  glColor3f(0, 0, 1); // z axis is blue.
+  glVertex3fv(ORG);
+  glVertex3fv(ZP);
+  glEnd();
+  glPopMatrix();
+}
 /* Callback de desenho */
 void draw(void)
 {
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // ... chamada das rotinas auxiliares de desenho ...
@@ -169,38 +202,34 @@ void draw(void)
   glRotatef(modelo.theta[1], 0, 1, 0);
   glRotatef(modelo.theta[2], 0, 0, 1);
 
-  //rotate 45 on x axis
-  //glRotatef(45.0, 1.0, 0.0, 0.0);
+  // rotate 45 on x axis
+  // glRotatef(45.0, 1.0, 0.0, 0.0);
 
-  //rotate 45 on y axis
-  //glRotatef(45.0, 0.0, 1.0, 0.0);
+  // rotate 45 on y axis
+  // glRotatef(45.0, 0.0, 1.0, 0.0);
 
-  //rotate 45 on z axis
-  //glRotatef(45.0, 0.0, 0.0, 1.0);
+  // rotate 45 on z axis
+  // glRotatef(45.0, 0.0, 0.0, 1.0);
 
   glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
-  // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir 
+  // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir
   // o tamanho do cubo usando a instrução glScalef(...) na função draw()
   // template já com as teclas no switch case da função key... dúvida a perguntar
 
-  // void glPolygonMode(GLenum face, GLenum mode);
+  void glPolygonMode(GLenum face, GLenum mode);
   // face: Specifies the polygons that mode applies to. Must be GL_FRONT_AND_BACK for front- and back-facing polygons.
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
-    
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   cubo();
   glPopMatrix();
+
+  eixos();
 
   if (estado.doubleBuffer)
     glutSwapBuffers();
   else
     glFlush();
-}
-
-void eixos(void)
-{
-
 }
 
 /**************************************
@@ -448,19 +477,8 @@ int main(int argc, char **argv)
   return 0;
 }
 
-
-
-
-
-
-// Perguntas Enunciado
-
-// 1.1/1.2/1.3/1.4/1.5 FEITO
 // 1.6 linha 171 a 180, não entendo muito bem o pretendido... já alterei os valores e nada
-// 1.7/1.8 FEITO
 // 1.9 acho que já está feito com o template do prof... linha 182-184
-// 1.10 linha 186-190
 // 1.11 (linha 201-204) por fazer
 // 1.12/13/14/15 por fazer
-// do que está feito, não me parece complicado
-// se conseguisses a 1.11 + 1.12 acho que já ficava mais jeitoso  
+// se conseguisses a 1.11 + 1.12 acho que já ficava mais jeitoso
