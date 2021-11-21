@@ -160,7 +160,8 @@ void cubo()
 // ... Definição das rotinas auxiliares de desenho ...
 void eixos(void)
 {
-
+   
+   
   // ... chamada das rotinas auxiliares de desenho ...
 
   glPushMatrix();
