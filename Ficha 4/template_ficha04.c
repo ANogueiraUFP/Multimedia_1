@@ -38,7 +38,8 @@
 ********** VARIÁVEIS GLOBAIS **********
 **************************************/
 
-typedef struct {
+typedef struct
+{
   GLboolean doubleBuffer;
   GLint delayMovimento;
   GLboolean debug;
@@ -46,7 +47,8 @@ typedef struct {
   GLboolean movimentoRotacao;    // se o cubo grande roda;
 } Estado;
 
-typedef struct {
+typedef struct
+{
   GLfloat theta[3]; // 0-Rotação em X; 1-Rotação em Y; 2-Rotação em Z
 
   GLint eixoRodar;             // eixo que está a rodar (mudar com o rato)
@@ -61,6 +63,7 @@ typedef struct {
 
 Estado estado;
 Modelo modelo;
+float EIXOS=0;
 
 /**************************************
 *** INICIALIZAÇÃO DO AMBIENTE OPENGL **
@@ -98,8 +101,7 @@ void reshape(int width, int height)
 {
   glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);
-  glLoadIdentity
-  ();
+  glLoadIdentity();
   if (width < height)
     glOrtho(-5, 5, -5 * (GLdouble)height / width, 5 * (GLdouble)height / width, -10, 10);
   else
@@ -129,15 +131,15 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat d[], GLfloat
 
 void cubo()
 {
-  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5}, //0
-                           {0.5, -0.5, -0.5}, //1
-                           {0.5, 0.5, -0.5}, //2
-                           {-0.5, 0.5, -0.5}, //3
+  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5}, // 0
+                           {0.5, -0.5, -0.5},  // 1
+                           {0.5, 0.5, -0.5},   // 2
+                           {-0.5, 0.5, -0.5},  // 3
 
-                           {-0.5, -0.5, 0.5}, //4
-                           {-0.5, 0.5, 0.5}, //7
-                           {0.5, 0.5, 0.5}, //6
-                           {0.5, -0.5, 0.5}}; //5
+                           {-0.5, -0.5, 0.5}, // 4
+                           {-0.5, 0.5, 0.5},  // 7
+                           {0.5, 0.5, 0.5},   // 6
+                           {0.5, -0.5, 0.5}}; // 5
 
   GLfloat cores[][3] = {{0.0, 1.0, 1.0},
                         {1.0, 0.0, 0.0},
@@ -156,10 +158,41 @@ void cubo()
 }
 
 // ... Definição das rotinas auxiliares de desenho ...
+void eixos(void)
+{
 
+  // ... chamada das rotinas auxiliares de desenho ...
+
+  glPushMatrix();
+
+  glTranslatef(3, 3, 3);
+  glRotatef(EIXOS, 0,1, 0);  
+
+  glRotatef(0, 1, 0, 0);
+  glRotatef(0, 0, 1, 0);
+  glRotatef(0, 0, 0, 1);
+  glScalef(1, 1, 1);
+
+  glLineWidth(2.0);
+
+  glBegin(GL_LINES);
+  glColor3f(1, 0, 0);
+  glVertex3f(0.0, 0.0, 0.0);
+
+  glVertex3f(1.0, 0.0, 0.0);
+  glColor3f(0, 1, 0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, 1.0, 0.0);
+  glColor3f(0, 0, 1);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, 0.0, 1.0);
+  glEnd();
+  glPopMatrix();
+}
 /* Callback de desenho */
 void draw(void)
 {
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // ... chamada das rotinas auxiliares de desenho ...
@@ -169,38 +202,34 @@ void draw(void)
   glRotatef(modelo.theta[1], 0, 1, 0);
   glRotatef(modelo.theta[2], 0, 0, 1);
 
-  //rotate 45 on x axis
-  //glRotatef(45.0, 1.0, 0.0, 0.0);
+  // rotate 45 on x axis
+  // glRotatef(45.0, 1.0, 0.0, 0.0);
 
-  //rotate 45 on y axis
-  //glRotatef(45.0, 0.0, 1.0, 0.0);
+  // rotate 45 on y axis
+  // glRotatef(45.0, 0.0, 1.0, 0.0);
 
-  //rotate 45 on z axis
-  //glRotatef(45.0, 0.0, 0.0, 1.0);
+  // rotate 45 on z axis
+  // glRotatef(45.0, 0.0, 0.0, 1.0);
 
-  glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
-  // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir 
+
+  // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir
   // o tamanho do cubo usando a instrução glScalef(...) na função draw()
   // template já com as teclas no switch case da função key... dúvida a perguntar
 
-  // void glPolygonMode(	GLenum face, GLenum mode);
+  void glPolygonMode(GLenum face, GLenum mode);
   // face: Specifies the polygons that mode applies to. Must be GL_FRONT_AND_BACK for front- and back-facing polygons.
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
-    
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   cubo();
   glPopMatrix();
+
+    eixos();
 
   if (estado.doubleBuffer)
     glutSwapBuffers();
   else
     glFlush();
-}
-
-void eixos(void)
-{
-
 }
 
 /**************************************
@@ -227,6 +256,7 @@ void timer(int value)
 
   // ROTAÇÃO DO CUBO
   modelo.theta[modelo.eixoRodar] = modelo.theta[modelo.eixoRodar] + 6;
+  EIXOS=EIXOS+3;
 
   /* redesenhar o ecrã */
   glutPostRedisplay();
@@ -447,3 +477,7 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+// 1.6 linha 171 a 180, não entendo muito bem o pretendido... já alterei os valores e nada
+// 1.12/13/14/15 por fazer
+// se conseguisses a 1.11 + 1.12 acho que já ficava mais jeitoso
