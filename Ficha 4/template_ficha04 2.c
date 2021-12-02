@@ -63,7 +63,7 @@ typedef struct
 
 Estado estado;
 Modelo modelo;
-float EIXOS = 0;
+float EIXOS=0;
 
 /**************************************
 *** INICIALIZAÇÃO DO AMBIENTE OPENGL **
@@ -160,13 +160,14 @@ void cubo()
 // ... Definição das rotinas auxiliares de desenho ...
 void eixos(void)
 {
-
+   
+   
   // ... chamada das rotinas auxiliares de desenho ...
 
   glPushMatrix();
 
   glTranslatef(3, 3, 3);
-  glRotatef(EIXOS, 0, 1, 0);
+  glRotatef(EIXOS, 0,1, 0);  
 
   glRotatef(0, 1, 0, 0);
   glRotatef(0, 0, 1, 0);
@@ -198,9 +199,6 @@ void draw(void)
   // ... chamada das rotinas auxiliares de desenho ...
 
   glPushMatrix();
-  glTranslatef(0, 0, 0);
-
-  modelo.theta[0] = modelo.theta[0] + 3;
   glRotatef(modelo.theta[0], 1, 0, 0);
   glRotatef(modelo.theta[1], 0, 1, 0);
   glRotatef(modelo.theta[2], 0, 0, 1);
@@ -214,6 +212,7 @@ void draw(void)
   // rotate 45 on z axis
   // glRotatef(45.0, 0.0, 0.0, 1.0);
 
+
   // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir
   // o tamanho do cubo usando a instrução glScalef(...) na função draw()
   // template já com as teclas no switch case da função key... dúvida a perguntar
@@ -226,7 +225,7 @@ void draw(void)
   cubo();
   glPopMatrix();
 
-  eixos();
+    eixos();
 
   if (estado.doubleBuffer)
     glutSwapBuffers();
@@ -258,7 +257,7 @@ void timer(int value)
 
   // ROTAÇÃO DO CUBO
   modelo.theta[modelo.eixoRodar] = modelo.theta[modelo.eixoRodar] + 6;
-  EIXOS = EIXOS + 3;
+  EIXOS=EIXOS+3;
 
   /* redesenhar o ecrã */
   glutPostRedisplay();
