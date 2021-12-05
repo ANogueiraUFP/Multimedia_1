@@ -285,7 +285,7 @@ void torre(Tanque t)
                            {t.x - l, t.y + c, ALTURA_BASE + ALTURA_TORRE},
                            {t.x + l, t.y + c, ALTURA_BASE + ALTURA_TORRE}};
 
-  GLfloat cores[][3] = {{0.0, 1.02, 0.51}};
+  GLfloat cores[][3] = {{1.0, 0.0, 0.0}};
 
   cubo(vertices, cores);
 }
@@ -303,7 +303,7 @@ void base(Tanque t)
                            {t.x - l, t.y + c, ALTURA_BASE},
                            {t.x + l, t.y + c, ALTURA_BASE}};
 
-  GLfloat cores[][3] = {{0.0, 0.51, 0.0}};
+  GLfloat cores[][3] = {{0.0, 1.0, 0.0}};
   cubo(vertices, cores);
 }
 
@@ -321,7 +321,7 @@ void canhao(Tanque t)
                            {t.x - r, c + c1, ALTURA_BASE + (r * 2)},
                            {t.x + r, c + c1, ALTURA_BASE + (r * 2)}};
 
-  GLfloat cores[][3] = {{0.51, 1.02, 0.0}};
+  GLfloat cores[][3] = {{0.0, 0.0, 1.0}};
 
   cubo(vertices, cores);
 }
