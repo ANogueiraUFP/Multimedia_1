@@ -410,6 +410,7 @@ void timer(int value)
 
   // ALINEA 1.7
   // EIXOS = EIXOS + 1;
+  printf("Direcao%.2f\nx:%.2f\ny%.2f\n", modelo.tanque.direccao, modelo.tanque.x, modelo.tanque.y);
 
   if (estado.menuActivo || modelo.parado) // Sair em caso de o jogo estar parado ou menu estar activo
     return;
@@ -434,8 +435,8 @@ void imprime_ajuda(void)
   printf("o,O - Alterna entre projecãoo Ortografica e Perspectiva\n");
   printf("f,F - Poligono Fill \n");
   printf("l,L - Poligono Line \n");
-  printf("p,P - Poligono Point \n");
-  printf("s,S - Inicia/para movimento\n");
+  printf("m,M - Poligono Point \n");
+  printf("p,P - Inicia/para movimento\n");
   printf("ESC - Sair\n");
 }
 
@@ -466,95 +467,86 @@ void key(unsigned char key, int x, int y)
     estado.ortho = !estado.ortho;
     reshape(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
     break;
-  case 'Q':
-  case 'q':
+  case 'R':
+  case 'r':
     if (modelo.tanque.angCanhao >= 25)
       break;
     else
       modelo.tanque.angCanhao += 2;
     estado.teclas.q = GL_TRUE;
     break;
-  case 'A':
-  case 'a':
+  case 'F':
+  case 'f':
     if (modelo.tanque.angCanhao <= 0)
       break;
     else
       modelo.tanque.angCanhao -= 2;
     estado.teclas.a = GL_TRUE;
     break;
-  case 'Z':
-  case 'z':
+  case 'Q':
+  case 'q':
     modelo.tanque.angTorre += 2;
     estado.teclas.z = GL_TRUE;
     break;
-  case 'X':
-  case 'x':
+  case 'E':
+  case 'e':
     modelo.tanque.angTorre -= 2;
     estado.teclas.x = GL_TRUE;
     break;
-  case 'D':
-  case 'd':
+  case 'X':
+  case 'x':
     estado.debug = !estado.debug;
     if (estado.menuActivo || modelo.parado)
       glutPostRedisplay();
     printf("DEBUG is %s\n", (estado.debug) ? "ON" : "OFF");
     break;
-  case 'f':
-  case 'F':
+  case 'Z':
+  case 'z':
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     break;
-  case 'p':
-  case 'P':
+  case 'm':
+  case 'M':
     glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
     break;
   case 'l':
   case 'L':
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     break;
-  case 'E':
-  case 'e':
-  if(modelo.tanque.direccao>180){
-        modelo.tanque.direccao =0;
-
-  }else
+  case 'A':
+  case 'a':
     modelo.tanque.direccao += 2;
     break;
-  case 'W':
-  case 'w':
+  case 'D':
+  case 'd':
     modelo.tanque.direccao -= 2;
     break;
-  case 'R':
-  case 'r':
-
-    break;
-  case 'T':
-  case 't':
-    modelo.tanque.x -= 2;
-    break;
-  case 'u':
-  case 'U':
-   if(modelo.tanque.direccao==90)
+  case 'w':
+  case 'W':
+    if (modelo.tanque.direccao > 0 && modelo.tanque.direccao < 90)
     {
-
-      modelo.tanque.x += 2;
-
+      modelo.tanque.y -= sin(modelo.tanque.direccao) * 2;
+      modelo.tanque.x -= cos(modelo.tanque.direccao) * 4;
     }else
-     modelo.tanque.y += 2;
     break;
-  case 'Y':
-  case 'y':
-  if (modelo.tanque.direccao > 15)
+  case 'S':
+  case 's':
+    if (modelo.tanque.direccao > 0)
     {
-
-        modelo.tanque.x -= 2;
+      modelo.tanque.y -= 2;
+      modelo.tanque.x += 2;
     }
-   
+    if (modelo.tanque.direccao < 0)
+    {
+      modelo.tanque.y -= 2;
+      modelo.tanque.x -= 2;
+    }
+
     break;
 
-    /* case 's' :
-     case 'S' :
-                modelo.parado=!modelo.parado;
-            break;*/
+  case 'p':
+  case 'P':
+    modelo.parado = !modelo.parado;
+    break;
   }
 
   if (DEBUG)
