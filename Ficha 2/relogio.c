@@ -5,10 +5,9 @@
 #include <time.h>
 #include "glm.h"
 
-
 /**************************************
-* AUXILIARES CONVERSÃO GRAUS-RADIANOS *
-**************************************/
+ * AUXILIARES CONVERSÃO GRAUS-RADIANOS *
+ **************************************/
 
 #define rtd(x) (180 * (x) / M_PI)
 #define dtr(x) (M_PI * (x) / 180)
@@ -37,6 +36,11 @@ typedef struct
   GLfloat tamLado;
   Horas hora;
 } Modelo;
+
+float colors[3] = {0.43f, 0.42f, 0.42f};
+float mostradorInside[3] = {1.0f, 1.0f, 1.0f};
+float color_2[3] = {0.0f, 0.0f, 0.0f};
+
 
 Estado estado;
 Modelo modelo;
@@ -172,13 +176,13 @@ void key(unsigned char key, int x, int y)
     /* Ações sobre outras teclas */
 
   case '+':
-    
-    //estado.delay=50;
-    //modelo.hora.hor=modelo.hora.hor +50;
+
+    // estado.delay=50;
+    // modelo.hora.hor=modelo.hora.hor +50;
     break;
 
   case '-':
-    
+
     break;
   }
 
@@ -199,7 +203,7 @@ float distancia(PONTO p1, PONTO p2)
   return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-PONTO *poligono(int n, PONTO pc, float raio)
+void poligono(int n, PONTO pc, float raio, float colors[3])
 {
   PONTO *pontos = calloc(n, sizeof(PONTO));
   float angulo = (360.0 * M_PI / 180.0) / (float)n;
@@ -209,7 +213,14 @@ PONTO *poligono(int n, PONTO pc, float raio)
     pontos[i].x = raio * cos(a) + pc.x;
     pontos[i].y = raio * sin(a) + pc.y;
   }
-  return pontos;
+  glBegin(GL_POLYGON);
+  for (int i = 0; i < n; i++)
+  {
+    glColor3fv(colors);
+    glVertex2f(pontos[i].x, pontos[i].y);
+  }
+  glEnd();
+  glFlush();
 }
 
 /**
@@ -251,7 +262,7 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   float anguloHoras = ((360.0 * M_PI / 180.0) / (float)12);
   float anguloMinSec = ((360.0 * M_PI / 180.0) / (float)60);
 
-  //horas
+  // horas
   glLineWidth(4.0);
   glBegin(GL_LINES);
   glVertex2f(pc.x, pc.y);
@@ -259,7 +270,7 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   glEnd();
   glFlush();
 
-  //minutos
+  // minutos
   glLineWidth(2.0);
   glBegin(GL_LINES);
   glVertex2f(pc.x, pc.y);
@@ -267,7 +278,7 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   glEnd();
   glFlush();
 
-  //segundos
+  // segundos
   glLineWidth(1);
   glBegin(GL_LINES);
   glVertex2f(pc.x, pc.y);
@@ -278,40 +289,17 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
 
 void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
 {
-  //desenha contorno do relogio (cinza)
-  glBegin(GL_POLYGON);
-  pontos1 = poligono(n, pc, modelo.raio + 0.08);
-  for (int i = 0; i < n; i++)
-  {
-    glColor3f(0.43f, 0.42f, 0.42f);
-    glVertex2f(pontos1[i].x, pontos1[i].y);
-  }
-  glEnd();
-  glFlush();
 
-  //desenha interior do relogio (branco)
-  glBegin(GL_POLYGON);
-  pontos = poligono(n, pc, modelo.raio);
-  for (int i = 0; i < n; i++)
-  {
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glVertex2f(pontos[i].x, pontos[i].y);
-  }
-  glEnd();
-  glFlush();
+  // desenha contorno do relogio (cinza)
+  poligono(n, pc, modelo.raio + 0.08, colors);
 
-  //centro do relogio
-  glBegin(GL_POLYGON);
-  pontos2 = poligono(n, pc, 0.02);
-  for (int i = 0; i <= n; i++)
-  {
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glVertex2f(pontos2[i].x, pontos2[i].y);
-  }
-  glEnd();
-  glFlush();
+  // desenha interior do relogio (branco)
+  poligono(n, pc, modelo.raio, mostradorInside);
 
-  //desenhar traços horas + minutos
+  // centro do relogio
+  poligono(n, pc, 0.02, color_2);
+
+  // desenhar traços horas + minutos
   retas = poligono_semireta(pc, (distancia(p0, p1) / 2) + modelo.raio);
   int caracter = 49, count = 0;
   float anguloHoras = ((360.0 * M_PI / 180.0) / (float)60);
@@ -356,6 +344,8 @@ void desenhar_relogio(void)
 
   glClear(GL_COLOR_BUFFER_BIT);
 
+  // ALINEA 1.5 e 1.6, descomentar
+  // poligono(n,pc,modelo.raio);
   mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
   ponteiros(pc, retas);
 }
@@ -375,7 +365,7 @@ int main(int argc, char **argv)
   if (glutCreateWindow("Relógio") == GL_FALSE)
     exit(1);
 
-   init();
+  init();
   menu();
 
   /* Registar callbacks do GLUT */
@@ -386,9 +376,9 @@ int main(int argc, char **argv)
 
   /* Callbacks de teclado */
   glutKeyboardFunc(key);
-  //glutKeyboardUpFunc(keyUp);
-  //glutSpecialFunc(specialKey);
-  //glutSpecialUpFunc(specialKeyUp);
+  // glutKeyboardUpFunc(keyUp);
+  // glutSpecialFunc(specialKey);
+  // glutSpecialUpFunc(specialKeyUp);
 
   /* Callbacks timer/idle */
   glutTimerFunc(estado.delay, timer, 0);

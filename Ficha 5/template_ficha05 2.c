@@ -288,11 +288,6 @@ void torre(Tanque t)
   GLfloat cores[][3] = {{1.0, 0.0, 0.0}};
 
   cubo(vertices, cores);
-  glPushMatrix();
-  glTranslatef(t.x, t.y, 0);
-  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
-  glTranslatef(-t.x, -t.y, 0);
-  glPopMatrix();
 }
 
 void base(Tanque t)
@@ -331,36 +326,6 @@ void canhao(Tanque t)
   cubo(vertices, cores);
 }
 
-void desenhaTanque_(Tanque t)
-{
-
-  // desenha base centrada na posição t.x, t.y, 0 - x,y,z
-  glPushMatrix();
-  glTranslatef(t.x, t.y, 0);
-  glRotatef(modelo.tanque.direccao, 0.0f, 0.0f, 1.0f);
-  //scale
-  //pushmatrix
-  //popMatrix
-  //cubo
-    glTranslatef(-t.x, -t.y, 0);
-  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
-
-  base(t);
-
-  //translate para torre por cima da base
-  torre(t);
-
-  //translate para torre por cima da base
-
-
-  glTranslatef(t.x, (t.y + (COMPRIMENTO_TORRE / 2)), ALTURA_BASE);
-  glRotatef(t.angCanhao, 1.0f, 0, 0);
-  glTranslatef(-t.x, -(t.y + (COMPRIMENTO_TORRE / 2)), -ALTURA_BASE);
-  canhao(t);
-
-  glPopMatrix();
-}
-
 void desenhaTanque(Tanque t)
 {
 
@@ -372,7 +337,7 @@ void desenhaTanque(Tanque t)
   base(t);
 
   glTranslatef(t.x, t.y, 0);
-  glRotatef(t.angTorre, 0, 0, 1);
+  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
   glTranslatef(-t.x, -t.y, 0);
   torre(t);
 
@@ -411,8 +376,12 @@ void draw(void)
   desenhaChao(RAIO_ROTACAO + 5);
 
   glPushMatrix();
-  glRotatef(EIXOS, 0, 0, RAIO_ROTACAO);
+
+  // ALINEA1.7, FALTA TRANSLATE
+  // glRotatef(EIXOS, 0, 0, 1);
+
   desenhaTanque(modelo.tanque);
+
   glPopMatrix();
 
   glFlush();
@@ -438,10 +407,9 @@ void timer(int value)
 {
   glutTimerFunc(estado.delayMovimento, timer, 0);
   // ... Ações do temporizador ...
-  EIXOS = EIXOS + 1;
-  printf("Direcao%.2f\nx:%.2f\ny%.2f\n", modelo.tanque.direccao, modelo.tanque.x, modelo.tanque.y);
 
-//if teclas true....flag mudar estado mais que uma tecla...
+  // ALINEA 1.7
+  // EIXOS = EIXOS + 1;
 
   if (estado.menuActivo || modelo.parado) // Sair em caso de o jogo estar parado ou menu estar activo
     return;
@@ -466,8 +434,8 @@ void imprime_ajuda(void)
   printf("o,O - Alterna entre projecãoo Ortografica e Perspectiva\n");
   printf("f,F - Poligono Fill \n");
   printf("l,L - Poligono Line \n");
-  printf("m,M - Poligono Point \n");
-  printf("p,P - Inicia/para movimento\n");
+  printf("p,P - Poligono Point \n");
+  printf("s,S - Inicia/para movimento\n");
   printf("ESC - Sair\n");
 }
 
@@ -498,75 +466,95 @@ void key(unsigned char key, int x, int y)
     estado.ortho = !estado.ortho;
     reshape(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
     break;
-  case 'R':
-  case 'r':
+  case 'Q':
+  case 'q':
     if (modelo.tanque.angCanhao >= 25)
       break;
     else
       modelo.tanque.angCanhao += 2;
     estado.teclas.q = GL_TRUE;
     break;
-  case 'F':
-  case 'f':
+  case 'A':
+  case 'a':
     if (modelo.tanque.angCanhao <= 0)
       break;
     else
       modelo.tanque.angCanhao -= 2;
     estado.teclas.a = GL_TRUE;
     break;
-  case 'Q':
-  case 'q':
+  case 'Z':
+  case 'z':
     modelo.tanque.angTorre += 2;
     estado.teclas.z = GL_TRUE;
     break;
-  case 'E':
-  case 'e':
+  case 'X':
+  case 'x':
     modelo.tanque.angTorre -= 2;
     estado.teclas.x = GL_TRUE;
     break;
-  case 'X':
-  case 'x':
+  case 'D':
+  case 'd':
     estado.debug = !estado.debug;
     if (estado.menuActivo || modelo.parado)
       glutPostRedisplay();
     printf("DEBUG is %s\n", (estado.debug) ? "ON" : "OFF");
     break;
-  case 'Z':
-  case 'z':
+  case 'f':
+  case 'F':
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     break;
-  case 'm':
-  case 'M':
+  case 'p':
+  case 'P':
     glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
     break;
   case 'l':
   case 'L':
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     break;
-  case 'A':
-  case 'a':
+  case 'E':
+  case 'e':
+  if(modelo.tanque.direccao>180){
+        modelo.tanque.direccao =0;
+
+  }else
     modelo.tanque.direccao += 2;
     break;
-  case 'D':
-  case 'd':
+  case 'W':
+  case 'w':
     modelo.tanque.direccao -= 2;
     break;
-  case 'w':
-  case 'W':
+  case 'R':
+  case 'r':
 
-    modelo.tanque.y = (sin(RAD(modelo.tanque.direccao)) + modelo.tanque.x);
-    modelo.tanque.x = (cos(RAD(modelo.tanque.direccao)) + modelo.tanque.y);
     break;
-  case 'S':
-  case 's':
-    // modelo.tanque.y = (cos(modelo.tanque.direccao) - modelo.tanque.x);
-    // modelo.tanque.x = (sin(modelo.tanque.direccao) + modelo.tanque.y);
+  case 'T':
+  case 't':
+    modelo.tanque.x -= 2;
+    break;
+  case 'u':
+  case 'U':
+   if(modelo.tanque.direccao==90)
+    {
+
+      modelo.tanque.x += 2;
+
+    }else
+     modelo.tanque.y += 2;
+    break;
+  case 'Y':
+  case 'y':
+  if (modelo.tanque.direccao > 15)
+    {
+
+        modelo.tanque.x -= 2;
+    }
+   
     break;
 
-  case 'p':
-  case 'P':
-    modelo.parado = !modelo.parado;
-    break;
+    /* case 's' :
+     case 'S' :
+                modelo.parado=!modelo.parado;
+            break;*/
   }
 
   if (DEBUG)
@@ -628,7 +616,7 @@ int main(int argc, char **argv)
 
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(800, 600);
+  glutInitWindowSize(640, 480);
   glutInitDisplayMode(((estado.doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE) | GLUT_RGB | GLUT_DEPTH);
   if (glutCreateWindow("Tanque") == GL_FALSE)
     exit(1);
@@ -647,7 +635,7 @@ int main(int argc, char **argv)
   glutKeyboardFunc(key);
   glutKeyboardUpFunc(keyUp);
   glutSpecialFunc(specialKey);
-  (specialKeyUp);
+  glutSpecialUpFunc(specialKeyUp);
 
   /* Callbacks timer/idle */
   glutTimerFunc(estado.delayMovimento, timer, 0);
