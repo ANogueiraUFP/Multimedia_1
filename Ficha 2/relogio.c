@@ -41,30 +41,12 @@ float colors[3] = {0.43f, 0.42f, 0.42f};
 float mostradorInside[3] = {1.0f, 1.0f, 1.0f};
 float color_2[3] = {0.0f, 0.0f, 0.0f};
 
-
 Estado estado;
 Modelo modelo;
 
 /**************************************
 *** INICIALIZAÇÃO DO AMBIENTE OPENGL **
 **************************************/
-
-void init(void)
-{
-
-  /* Delay para o timer */
-  estado.delay = 1000;
-
-  modelo.tamLado = 1;
-  modelo.numLados = 60;
-  modelo.raio = 0.75;
-
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-
-  glEnable(GL_POINT_SMOOTH);
-  glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_POLYGON_SMOOTH);
-}
 
 /**************************************
 ***** CALL BACKS DE JANELA/DESENHO ****
@@ -80,6 +62,28 @@ void refreshtime(void)
   modelo.hora.min = current_time->tm_min;
   modelo.hora.seg = current_time->tm_sec;
 }
+
+void init(void)
+{
+  // refreshtime();
+  /* Delay para o timer */
+  modelo.hora.hor = 1;
+  modelo.hora.min = 59;
+  modelo.hora.seg = 50;
+
+  estado.delay = 1000;
+
+  modelo.tamLado = 1;
+  modelo.numLados = 60;
+  modelo.raio = 0.75;
+
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_POLYGON_SMOOTH);
+}
+
 /* Callback para redimensionar janela */
 void reshape(int width, int height)
 {
@@ -142,6 +146,20 @@ void idle(void)
 void timer(int value)
 {
   glutTimerFunc(estado.delay, timer, 0);
+
+  modelo.hora.seg = modelo.hora.seg + 1;
+  if (modelo.hora.seg >= 60)
+  {
+    modelo.hora.min = modelo.hora.min + 1;
+    modelo.hora.seg = 0;
+  }
+
+  if (modelo.hora.min >=60 )
+  {
+    modelo.hora.hor = modelo.hora.hor + 1;
+    modelo.hora.min = 0;
+  }
+
   /* Acções do temporizador ...
      Não colocar aqui primitivas OpenGL de desenho glBegin, glEnd, etc.
      Simplesmente alterar os valores de modelo.hora.hor, modelo.hora.min e modelo.hora.seg */
@@ -252,7 +270,6 @@ SEMIRETA *poligono_semireta(PONTO pc, float raio)
 
 void ponteiros(PONTO pc, SEMIRETA *retas)
 {
-  refreshtime();
   float angulo_horas, angulo_min;
 
   if (modelo.hora.hor > 12)
@@ -345,9 +362,13 @@ void desenhar_relogio(void)
   glClear(GL_COLOR_BUFFER_BIT);
 
   // ALINEA 1.5 e 1.6, descomentar
-  // poligono(n,pc,modelo.raio);
+  // poligono(n,pc,modelo.raio,colors);
   mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
   ponteiros(pc, retas);
+
+  printf("%d\n", modelo.hora.hor);
+  printf("%d\n", modelo.hora.min);
+  printf("%d\n", modelo.hora.seg);
 }
 
 /**************************************
@@ -364,7 +385,6 @@ int main(int argc, char **argv)
   glutInitDisplayMode(((estado.doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE) | GLUT_RGB);
   if (glutCreateWindow("Relógio") == GL_FALSE)
     exit(1);
-
   init();
   menu();
 
