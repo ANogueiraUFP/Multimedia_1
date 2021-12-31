@@ -68,10 +68,10 @@ void init(void)
   // refreshtime();
   /* Delay para o timer */
 
-  //TESTE TIMER ESTATICO
-  //modelo.hora.hor = 1;
-  //modelo.hora.min = 59;
-  //modelo.hora.seg = 50;
+  // TESTE TIMER ESTATICO
+  // modelo.hora.hor = 1;
+  // modelo.hora.min = 59;
+  // modelo.hora.seg = 50;
 
   estado.delay = 1000;
 
@@ -149,7 +149,6 @@ void timer(int value)
 {
   glutTimerFunc(estado.delay, timer, 0);
 
-
   /* Acções do temporizador ...
      Não colocar aqui primitivas OpenGL de desenho glBegin, glEnd, etc.
      Simplesmente alterar os valores de modelo.hora.hor, modelo.hora.min e modelo.hora.seg */
@@ -161,10 +160,17 @@ void timer(int value)
     modelo.hora.seg = 0;
   }
 
-  if (modelo.hora.min >=60 )
+  if (modelo.hora.min >= 60)
   {
-    modelo.hora.hor = modelo.hora.hor + 1;
-    modelo.hora.min = 0;
+    if (modelo.hora.hor <= 11)
+    {
+      modelo.hora.hor = modelo.hora.hor + 1;
+      modelo.hora.min = 0;
+    }
+    else
+    {
+      modelo.hora.hor = 1;
+    }
   }
 
   /* Redesenhar o ecrã (invoca o callback de desenho) */
@@ -197,14 +203,15 @@ void key(unsigned char key, int x, int y)
     /* Ações sobre outras teclas */
 
   case '+':
-  if(estado.delay>250){
+    if (estado.delay > 250)
+    {
 
-        estado.delay=estado.delay-250;
-  }
+      estado.delay = estado.delay - 250;
+    }
     break;
 
   case '-':
-    estado.delay=estado.delay+250;
+    estado.delay = estado.delay + 250;
     break;
   }
 

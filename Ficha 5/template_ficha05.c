@@ -647,7 +647,7 @@ int main(int argc, char **argv)
   glutKeyboardFunc(key);
   glutKeyboardUpFunc(keyUp);
   glutSpecialFunc(specialKey);
-  (specialKeyUp);
+  glutSpecialFunc(specialKeyUp);
 
   /* Callbacks timer/idle */
   glutTimerFunc(estado.delayMovimento, timer, 0);
