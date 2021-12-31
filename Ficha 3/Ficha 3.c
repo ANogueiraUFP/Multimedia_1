@@ -19,8 +19,8 @@
 #endif
 
 /**************************************
-* AUXILIARES CONVERSÃO GRAUS-RADIANOS *
-**************************************/
+ * AUXILIARES CONVERSÃO GRAUS-RADIANOS *
+ **************************************/
 
 #define RAD(x) (M_PI * (x) / 180)
 #define GRAUS(x) (180 * (x) / M_PI)
@@ -52,31 +52,31 @@ typedef struct
 
 typedef struct
 {
-  GLboolean doubleBuffer;     // Double Buffer ON/OFF
-  GLint delayMovimento;       // Delay do timer (timer)
-  GLint delayTeclas;          // Delay do timer (timerTeclas)
-  Teclas teclas;              // Teclas DOWN/UP (Key e KeyUp)
-  GLuint menu_vel_bola_id;    // Guarda id menu (cria_menu)
-  GLuint menu_tam_bola_id;    // Guarda id menu (cria_menu)
-  GLuint menu_vel_raq_id;     // Guarda id menu (cria_menu)
-  GLuint menu_tam_raq_id;     // Guarda id menu (cria_menu)
-  GLuint menu_id;             // Guarda id menu (cria_menu)
-  GLboolean menuActivo;       // Menu openGL está ON/OFF
-  GLboolean debug;            // Mensagens debug ON/OFF
+  GLboolean doubleBuffer;  // Double Buffer ON/OFF
+  GLint delayMovimento;    // Delay do timer (timer)
+  GLint delayTeclas;       // Delay do timer (timerTeclas)
+  Teclas teclas;           // Teclas DOWN/UP (Key e KeyUp)
+  GLuint menu_vel_bola_id; // Guarda id menu (cria_menu)
+  GLuint menu_tam_bola_id; // Guarda id menu (cria_menu)
+  GLuint menu_vel_raq_id;  // Guarda id menu (cria_menu)
+  GLuint menu_tam_raq_id;  // Guarda id menu (cria_menu)
+  GLuint menu_id;          // Guarda id menu (cria_menu)
+  GLboolean menuActivo;    // Menu openGL está ON/OFF
+  GLboolean debug;         // Mensagens debug ON/OFF
 } Estado;
 
 typedef struct
 {
-  GLfloat x, y;              // Posição da raquete
-  GLint pontuacao;            // Pontuação do jogador
+  GLfloat x, y;    // Posição da raquete
+  GLint pontuacao; // Pontuação do jogador
 } Raquete;
 
 typedef struct
 {
-  GLfloat x, y;               // Posição da bola
-  GLint velocidade;           // Velocidade da bola
-  GLfloat direccao;           // Direcção que a bola segue em RAD
-  GLint tamanho;              // Tamanho da bola
+  GLfloat x, y;     // Posição da bola
+  GLint velocidade; // Velocidade da bola
+  GLfloat direccao; // Direcção que a bola segue em RAD
+  GLint tamanho;    // Tamanho da bola
 } Bola;
 
 typedef struct
@@ -319,26 +319,24 @@ void idle(void)
 /* Callback de temporizador */
 void timer(int value)
 {
- 
+
   glutTimerFunc(estado.delayMovimento, timer, 0);
   // ... Ações do temporizador ...
 
   if (estado.menuActivo || modelo.parado) // Sair no caso do jogo estar parado ou menu estar activo
     return;
-  
-  modelo.bola.x = (modelo.bola.velocidade*cos(modelo.bola.direccao)+modelo.bola.x);
-  modelo.bola.y = (modelo.bola.velocidade*sin(modelo.bola.direccao)+modelo.bola.y);
 
-  
+  modelo.bola.x = (modelo.bola.velocidade * cos(modelo.bola.direccao) + modelo.bola.x);
+  modelo.bola.y = (modelo.bola.velocidade * sin(modelo.bola.direccao) + modelo.bola.y);
 
-  if(modelo.bola.x-TAMANHO_BOLA*2 < 0)
+  if (modelo.bola.x - TAMANHO_BOLA * 2 < 0)
   {
     modelo.bola.x = modelo.bola.x;
     modelo.bola.y = modelo.bola.y;
     modelo.jogador2.pontuacao++;
     inicia_jogo();
   }
-  if(modelo.bola.x+TAMANHO_BOLA*2 > LARGURA_CAMPO)
+  if (modelo.bola.x + TAMANHO_BOLA * 2 > LARGURA_CAMPO)
   {
     modelo.bola.x = modelo.bola.x;
     modelo.bola.y = modelo.bola.y;
@@ -346,24 +344,24 @@ void timer(int value)
     inicia_jogo();
   }
 
-  if(modelo.bola.y-TAMANHO_BOLA/2 < 0 || modelo.bola.y+TAMANHO_BOLA/2 > ALTURA_CAMPO)
+  if (modelo.bola.y - TAMANHO_BOLA / 2 < 0 || modelo.bola.y + TAMANHO_BOLA / 2 > ALTURA_CAMPO)
   {
     modelo.bola.direccao = -modelo.bola.direccao;
   }
 
-  if(modelo.bola.x-TAMANHO_BOLA/2 < modelo.jogador1.x+LARGURA_RAQUETES/2 && 
-    modelo.bola.x+TAMANHO_BOLA/2 > modelo.jogador1.x-LARGURA_RAQUETES/2 &&
-    modelo.bola.y-TAMANHO_BOLA/2 < modelo.jogador1.y+ALTURA_RAQUETES/2 && 
-    modelo.bola.y+TAMANHO_BOLA/2 > modelo.jogador1.y-ALTURA_RAQUETES/2)
+  if (modelo.bola.x - TAMANHO_BOLA / 2 < modelo.jogador1.x + LARGURA_RAQUETES / 2 &&
+      modelo.bola.x + TAMANHO_BOLA / 2 > modelo.jogador1.x - LARGURA_RAQUETES / 2 &&
+      modelo.bola.y - TAMANHO_BOLA / 2 < modelo.jogador1.y + ALTURA_RAQUETES / 2 &&
+      modelo.bola.y + TAMANHO_BOLA / 2 > modelo.jogador1.y - ALTURA_RAQUETES / 2)
   {
     modelo.bola.velocidade = -modelo.bola.velocidade;
     modelo.bola.direccao = -modelo.bola.direccao;
   }
 
-  if(modelo.bola.x-TAMANHO_BOLA/2 < modelo.jogador2.x+LARGURA_RAQUETES/2 &&
-    modelo.bola.x+TAMANHO_BOLA/2 > modelo.jogador2.x-LARGURA_RAQUETES/2 &&
-    modelo.bola.y-TAMANHO_BOLA/2 < modelo.jogador2.y+ALTURA_RAQUETES/2 && 
-    modelo.bola.y+TAMANHO_BOLA/2 > modelo.jogador2.y-ALTURA_RAQUETES/2)
+  if (modelo.bola.x - TAMANHO_BOLA / 2 < modelo.jogador2.x + LARGURA_RAQUETES / 2 &&
+      modelo.bola.x + TAMANHO_BOLA / 2 > modelo.jogador2.x - LARGURA_RAQUETES / 2 &&
+      modelo.bola.y - TAMANHO_BOLA / 2 < modelo.jogador2.y + ALTURA_RAQUETES / 2 &&
+      modelo.bola.y + TAMANHO_BOLA / 2 > modelo.jogador2.y - ALTURA_RAQUETES / 2)
   {
     modelo.bola.velocidade = -modelo.bola.velocidade;
     modelo.bola.direccao = -modelo.bola.direccao;
@@ -381,21 +379,21 @@ void timerTeclas(int value)
   if (estado.menuActivo || modelo.parado)
     return;
 
-  if (estado.teclas.a && modelo.jogador1.y>0+ALTURA_RAQUETES/2)
+  if (estado.teclas.a && modelo.jogador1.y > 0 + ALTURA_RAQUETES / 2)
   {
-    modelo.jogador1.y-=5;
+    modelo.jogador1.y -= 5;
   }
-  if (estado.teclas.q && modelo.jogador1.y<ALTURA_CAMPO-ALTURA_RAQUETES/2)
+  if (estado.teclas.q && modelo.jogador1.y < ALTURA_CAMPO - ALTURA_RAQUETES / 2)
   {
-    modelo.jogador1.y+=5;
+    modelo.jogador1.y += 5;
   }
-  if (estado.teclas.l && modelo.jogador2.y>0+ALTURA_RAQUETES/2)
+  if (estado.teclas.l && modelo.jogador2.y > 0 + ALTURA_RAQUETES / 2)
   {
-    modelo.jogador2.y-=5;
+    modelo.jogador2.y -= 5;
   }
-  if (estado.teclas.p && modelo.jogador2.y<ALTURA_CAMPO-ALTURA_RAQUETES/2)
+  if (estado.teclas.p && modelo.jogador2.y < ALTURA_CAMPO - ALTURA_RAQUETES / 2)
   {
-    modelo.jogador2.y+=5;
+    modelo.jogador2.y += 5;
   }
 
   // Não é necessário redesenhar o ecrã, é feito no timer de animação
@@ -515,7 +513,7 @@ void specialKey(int key, int x, int y)
   switch (key)
   {
     /* Redesenhar o ecrã */
-    //glutPostRedisplay();
+    // glutPostRedisplay();
   }
 
   if (DEBUG)
@@ -536,7 +534,7 @@ void specialKeyUp(int key, int x, int y)
 
 void menuStatus(int status, int x, int y)
 {
-  /* status => GLUT_MENU_IN_USE, GLUT_MENU_NOT_IN_USE 
+  /* status => GLUT_MENU_IN_USE, GLUT_MENU_NOT_IN_USE
      x,y    => coordenadas do ponteiro quando se entra no menu
   */
 
@@ -673,8 +671,8 @@ int main(int argc, char **argv)
   estado.doubleBuffer = GL_TRUE;
 
   glutInit(&argc, argv);
-    //glutInitWindowPosition(0, 0);
-  glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH)-LARGURA_CAMPO)/2,(glutGet(GLUT_SCREEN_HEIGHT)-ALTURA_CAMPO)/2);
+  // glutInitWindowPosition(0, 0);
+  glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - LARGURA_CAMPO) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - ALTURA_CAMPO) / 2);
   glutInitWindowSize(LARGURA_CAMPO, ALTURA_CAMPO);
   glutInitDisplayMode(((estado.doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE) | GLUT_RGB);
   if (glutCreateWindow("Ping-Pong") == GL_FALSE)
@@ -693,9 +691,9 @@ int main(int argc, char **argv)
   // Callbacks de teclado
   glutKeyboardFunc(key);
   glutKeyboardUpFunc(keyUp);
-  //glutSpecialFunc(SpecialKey);
-  //glutSpecialUpFunc(SpecialKeyUp);
-  // Callbacks timer/idle
+  // glutSpecialFunc(SpecialKey);
+  // glutSpecialUpFunc(SpecialKeyUp);
+  //  Callbacks timer/idle
   glutTimerFunc(estado.delayMovimento, timer, 0);
   glutTimerFunc(estado.delayTeclas, timerTeclas, 0);
 

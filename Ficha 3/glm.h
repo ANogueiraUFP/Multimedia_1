@@ -30,20 +30,6 @@
 #define GLM_COLOR    (1 << 3)       /* render with colors */
 #define GLM_MATERIAL (1 << 4)       /* render with materials */
 
-/* worksheet 1
- */
-typedef struct ponto
-{
-  float x,y;        
-} PONTO;
-
-PONTO ponto_medio(PONTO p1, PONTO p2);
-
-void desenhar_circunferencia(void);
-
-float distancia(PONTO p1, PONTO p2);
-
-PONTO *coordenadas(int n, PONTO pc, float raio);
 
 /* GLMmaterial: Structure that defines a material in a model. 
  */
@@ -106,6 +92,7 @@ typedef struct _GLMmodel {
   GLfloat position[3];          /* position of the model */
 
 } GLMmodel;
+
 
 /* glmUnitize: "unitize" a model by translating it to the origin and
  * scaling it to fit in a unit cube around the origin.  Returns the

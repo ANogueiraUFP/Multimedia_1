@@ -65,7 +65,7 @@ void refreshtime(void)
 
 void init(void)
 {
-  // refreshtime();
+  refreshtime();
   /* Delay para o timer */
 
   // TESTE TIMER ESTATICO
@@ -148,6 +148,10 @@ void idle(void)
 void timer(int value)
 {
   glutTimerFunc(estado.delay, timer, 0);
+  // Debug Code
+  printf("H%d\n", modelo.hora.hor);
+  printf("M%d\n", modelo.hora.min);
+  printf("S%d\n\n", modelo.hora.seg);
 
   /* Acções do temporizador ...
      Não colocar aqui primitivas OpenGL de desenho glBegin, glEnd, etc.
@@ -162,15 +166,8 @@ void timer(int value)
 
   if (modelo.hora.min >= 60)
   {
-    if (modelo.hora.hor <= 11)
-    {
-      modelo.hora.hor = modelo.hora.hor + 1;
-      modelo.hora.min = 0;
-    }
-    else
-    {
-      modelo.hora.hor = 1;
-    }
+    modelo.hora.hor = modelo.hora.hor + 1;
+    modelo.hora.min = 0;
   }
 
   /* Redesenhar o ecrã (invoca o callback de desenho) */
@@ -249,7 +246,6 @@ void poligono(int n, PONTO pc, float raio, float colors[3])
     glVertex2f(pontos[i].x, pontos[i].y);
   }
   glEnd();
-  glFlush();
 }
 
 /**
@@ -296,7 +292,6 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   glVertex2f(pc.x, pc.y);
   glVertex2f((modelo.raio - 0.27) * cos(-anguloHoras * modelo.hora.hor + (M_PI) / 2) + pc.x, (modelo.raio - 0.27) * sin(-anguloHoras * modelo.hora.hor + (M_PI) / 2) + pc.y);
   glEnd();
-  glFlush();
 
   // minutos
   glLineWidth(2.0);
@@ -304,7 +299,6 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   glVertex2f(pc.x, pc.y);
   glVertex2f((modelo.raio - 0.20) * cos(-anguloMinSec * modelo.hora.min + (M_PI) / 2) + pc.x, (modelo.raio - 0.20) * sin(-anguloMinSec * modelo.hora.min + (M_PI) / 2) + pc.y);
   glEnd();
-  glFlush();
 
   // segundos
   glLineWidth(1);
@@ -312,7 +306,6 @@ void ponteiros(PONTO pc, SEMIRETA *retas)
   glVertex2f(pc.x, pc.y);
   glVertex2f((modelo.raio - 0.15) * cos(-anguloMinSec * modelo.hora.seg + (M_PI) / 2) + pc.x, (modelo.raio - 0.15) * sin(-anguloMinSec * modelo.hora.seg + (M_PI) / 2) + pc.y);
   glEnd();
-  glFlush();
 }
 
 void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos1, PONTO *pontos2, SEMIRETA *retas)
@@ -357,12 +350,12 @@ void mostrador(int n, PONTO p0, PONTO p1, PONTO pc, PONTO *pontos, PONTO *pontos
     glVertex2f(retas[i].p1.x, retas[i].p1.y);
     glVertex2f(retas[i].p2.x, retas[i].p2.y);
     glEnd();
-    glFlush();
   }
 }
 
 void desenhar_relogio(void)
 {
+
   int n = 360;
   PONTO p0, p1, pc, *pontos, *pontos1, *pontos2;
   SEMIRETA *retas;
@@ -375,11 +368,9 @@ void desenhar_relogio(void)
   // ALINEA 1.5 e 1.6, descomentar
   // poligono(n,pc,modelo.raio,colors);
   mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
-  ponteiros(pc, retas);
 
-  printf("%d\n", modelo.hora.hor);
-  printf("%d\n", modelo.hora.min);
-  printf("%d\n", modelo.hora.seg);
+  ponteiros(pc, retas);
+  glFlush();
 }
 
 /**************************************
@@ -403,6 +394,7 @@ int main(int argc, char **argv)
 
   /* callbacks de janelas/desenho */
   glutReshapeFunc(reshape);
+
   glutDisplayFunc(desenhar_relogio);
 
   /* Callbacks de teclado */
