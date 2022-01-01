@@ -73,7 +73,7 @@ void inicia_modelo()
 {
   estado.delayMovimento = 50;
   estado.movimentoTranslacao = GL_FALSE;
-  estado.movimentoRotacao = GL_FALSE;
+  estado.movimentoRotacao = GL_TRUE;
 
   modelo.theta[0] = 0;
   modelo.theta[1] = 0;
@@ -131,15 +131,17 @@ void desenhaPoligono(GLfloat a[], GLfloat b[], GLfloat c[], GLfloat d[], GLfloat
 
 void cubo()
 {
-  GLfloat vertices[][3] = {{-0.5, -0.5, -0.5}, // 0
-                           {0.5, -0.5, -0.5},  // 1
-                           {0.5, 0.5, -0.5},   // 2
-                           {-0.5, 0.5, -0.5},  // 3
+  GLfloat vertices[][3] = {
+      {-0.5, -0.5, -0.5}, // 0
+      {0.5, -0.5, -0.5},  // 1
+      {0.5, 0.5, -0.5},   // 2
+      {-0.5, 0.5, -0.5},  // 3
 
-                           {-0.5, -0.5, 0.5}, // 4
-                           {-0.5, 0.5, 0.5},  // 7
-                           {0.5, 0.5, 0.5},   // 6
-                           {0.5, -0.5, 0.5}}; // 5
+      {-0.5, -0.5, 0.5}, // 4
+      {0.5, -0.5, 0.5},  // 5
+      {0.5, 0.5, 0.5},   // 6
+      {-0.5, 0.5, 0.5},  // 7
+  };
 
   GLfloat cores[][3] = {{0.0, 1.0, 1.0},
                         {1.0, 0.0, 0.0},
@@ -149,12 +151,12 @@ void cubo()
                         {0.0, 0.0, 1.0},
                         {1.0, 1.0, 1.0}};
 
-  desenhaPoligono(vertices[2], vertices[3], vertices[5], vertices[6], cores[5]);
+  desenhaPoligono(vertices[0], vertices[1], vertices[2], vertices[3], cores[0]);
+  desenhaPoligono(vertices[0], vertices[3], vertices[4], vertices[7], cores[1]);
+  desenhaPoligono(vertices[1], vertices[2], vertices[5], vertices[6], cores[2]);
   desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], cores[3]);
-  desenhaPoligono(vertices[0], vertices[3], vertices[5], vertices[4], cores[1]);
-  desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], cores[0]);
-  desenhaPoligono(vertices[0], vertices[1], vertices[7], vertices[4], cores[4]);
-  desenhaPoligono(vertices[1], vertices[2], vertices[6], vertices[7], cores[2]);
+  desenhaPoligono(vertices[0], vertices[1], vertices[6], vertices[7], cores[4]);
+  desenhaPoligono(vertices[2], vertices[3], vertices[4], vertices[5], cores[5]);
 }
 
 // ... Definição das rotinas auxiliares de desenho ...
@@ -197,10 +199,14 @@ void draw(void)
 
   // ... chamada das rotinas auxiliares de desenho ...
 
-  glPushMatrix();
   glTranslatef(0, 0, 0);
 
-  modelo.theta[0] = modelo.theta[0] + 3;
+  if (estado.movimentoRotacao == GL_TRUE)
+  {
+    modelo.theta[0] = modelo.theta[0] + 3;
+    modelo.theta[modelo.eixoRodar] = modelo.theta[modelo.eixoRodar] + 3;
+  }
+
   glRotatef(modelo.theta[0], 1, 0, 0);
   glRotatef(modelo.theta[1], 0, 1, 0);
   glRotatef(modelo.theta[2], 0, 0, 1);
@@ -223,11 +229,12 @@ void draw(void)
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glScalef(modelo.ladoCubo,modelo.ladoCubo,modelo.ladoCubo);
   cubo();
   glPopMatrix();
 
   eixos();
-
+  glPushMatrix();
   if (estado.doubleBuffer)
     glutSwapBuffers();
   else
@@ -254,10 +261,8 @@ void timer(int value)
   /* ... accoes do temporizador não colocar aqui transformações, alterar
      somente os valores das variáveis ... */
 
-  // alterar o modelo.theta[] usando a variável modelo.eixoRodar como indice
-
   // ROTAÇÃO DO CUBO
-  modelo.theta[modelo.eixoRodar] = modelo.theta[modelo.eixoRodar] + 6;
+
   EIXOS = EIXOS + 3;
 
   /* redesenhar o ecrã */
@@ -414,24 +419,60 @@ void mouse(int button, int state, int x, int y)
   case GLUT_LEFT_BUTTON:
     if (state == GLUT_DOWN)
     {
-      modelo.eixoRodar = 0;
+      if (modelo.eixoRodar == 0 && estado.movimentoRotacao == GL_TRUE)
+      {
+        estado.movimentoRotacao = GL_FALSE;
+      }
+      else if (modelo.eixoRodar == 0 && estado.movimentoRotacao == GL_FALSE)
+      {
+        estado.movimentoRotacao = GL_TRUE;
+      }
+       else if(modelo.eixoRodar!=0)
+      {
+        estado.movimentoRotacao=GL_TRUE;
+        modelo.eixoRodar = 0;
+      }
     }
     break;
   case GLUT_MIDDLE_BUTTON:
     if (state == GLUT_DOWN)
     {
-      modelo.eixoRodar = 1;
+      if (modelo.eixoRodar == 1 && estado.movimentoRotacao == GL_TRUE)
+      {
+        estado.movimentoRotacao = GL_FALSE;
+      }
+      else if (modelo.eixoRodar == 1 && estado.movimentoRotacao == GL_FALSE)
+      {
+        estado.movimentoRotacao = GL_TRUE;
+      }
+      else if(modelo.eixoRodar!=1)
+      {
+        estado.movimentoRotacao=GL_TRUE;
+        modelo.eixoRodar = 1;
+      }
     }
     break;
   case GLUT_RIGHT_BUTTON:
     if (state == GLUT_DOWN)
     {
-      modelo.eixoRodar = 2;
+      if (modelo.eixoRodar == 2 && estado.movimentoRotacao == GL_TRUE)
+      {
+        estado.movimentoRotacao = GL_FALSE;
+      }
+      else if (modelo.eixoRodar == 2 && estado.movimentoRotacao == GL_FALSE)
+      {
+        estado.movimentoRotacao = GL_TRUE;
+      }
+      else if(modelo.eixoRodar!=2)
+      {
+        estado.movimentoRotacao=GL_TRUE;
+        modelo.eixoRodar = 2;
+      }
     }
     break;
   }
   if (DEBUG)
-    printf("Mouse button:%d state:%d coord:%d %d\n", button, state, x, y);
+    printf("Mouse button:%d state:%d coord:%d %d delay:%d\n", button, state, x, y, estado.delayMovimento);
 }
 
 /**************************************
