@@ -30,7 +30,7 @@
 **************************************/
 
 #define DEBUG 1
-#define LADO_MAXIMO 2
+#define LADO_MAXIMO 10
 #define LADO_MINIMO 0.3
 #define DELTA_LADO 0.1
 
@@ -211,26 +211,26 @@ void draw(void)
   glRotatef(modelo.theta[1], 0, 1, 0);
   glRotatef(modelo.theta[2], 0, 0, 1);
 
-  // rotate 45 on x axis
-  // glRotatef(45.0, 1.0, 0.0, 0.0);
-
-  // rotate 45 on y axis
-  // glRotatef(45.0, 0.0, 1.0, 0.0);
-
-  // rotate 45 on z axis
-  // glRotatef(45.0, 0.0, 0.0, 1.0);
-
-  // Inserir as teclas ‘+’ e ‘-‘ para aumentar e diminuir
-  // o tamanho do cubo usando a instrução glScalef(...) na função draw()
-  // template já com as teclas no switch case da função key... dúvida a perguntar
-
   void glPolygonMode(GLenum face, GLenum mode);
   // face: Specifies the polygons that mode applies to. Must be GL_FRONT_AND_BACK for front- and back-facing polygons.
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glScalef(modelo.ladoCubo,modelo.ladoCubo,modelo.ladoCubo);
+  glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
   cubo();
+
+  
+  glTranslatef(0.25, -0.5, -0.5);
+  glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+  cubo();
+
+  //glTranslatef(-0.5, 0.25, -0.5);
+   // glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+  //cubo();
+
+  //glTranslatef(-0.5, -0.5, 0.25);
+  //cubo();
+
   glPopMatrix();
 
   eixos();
@@ -427,9 +427,9 @@ void mouse(int button, int state, int x, int y)
       {
         estado.movimentoRotacao = GL_TRUE;
       }
-       else if(modelo.eixoRodar!=0)
+      else if (modelo.eixoRodar != 0)
       {
-        estado.movimentoRotacao=GL_TRUE;
+        estado.movimentoRotacao = GL_TRUE;
         modelo.eixoRodar = 0;
       }
     }
@@ -445,9 +445,9 @@ void mouse(int button, int state, int x, int y)
       {
         estado.movimentoRotacao = GL_TRUE;
       }
-      else if(modelo.eixoRodar!=1)
+      else if (modelo.eixoRodar != 1)
       {
-        estado.movimentoRotacao=GL_TRUE;
+        estado.movimentoRotacao = GL_TRUE;
         modelo.eixoRodar = 1;
       }
     }
@@ -463,9 +463,9 @@ void mouse(int button, int state, int x, int y)
       {
         estado.movimentoRotacao = GL_TRUE;
       }
-      else if(modelo.eixoRodar!=2)
+      else if (modelo.eixoRodar != 2)
       {
-        estado.movimentoRotacao=GL_TRUE;
+        estado.movimentoRotacao = GL_TRUE;
         modelo.eixoRodar = 2;
       }
     }
