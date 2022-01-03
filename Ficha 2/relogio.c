@@ -367,7 +367,7 @@ void desenhar_relogio(void)
 
   // ALINEA 1.5 e 1.6, descomentar
   // poligono(n,pc,modelo.raio,colors);
-  mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
+     mostrador(n, p0, p1, pc, pontos, pontos1, pontos2, retas);
 
   ponteiros(pc, retas);
   glFlush();

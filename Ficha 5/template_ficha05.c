@@ -51,6 +51,8 @@
 
 float EIXOS = 0;
 
+GLUquadric *quad;
+
 typedef struct
 {
   GLboolean q, a, z, x, up, down, left, right;
@@ -152,6 +154,10 @@ void init(void)
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_POLYGON_SMOOTH);
   glEnable(GL_DEPTH_TEST);
+
+  quad = gluNewQuadric();
+  gluQuadricDrawStyle(quad, GLU_FILL);
+
   // glutIgnoreKeyRepeat(GL_TRUE);
 }
 
@@ -338,20 +344,18 @@ void desenhaTanque_(Tanque t)
   glPushMatrix();
   glTranslatef(t.x, t.y, 0);
   glRotatef(modelo.tanque.direccao, 0.0f, 0.0f, 1.0f);
-  //scale
-  //pushmatrix
-  //popMatrix
-  //cubo
-    glTranslatef(-t.x, -t.y, 0);
+  // scale
+  // pushmatrix
+  // popMatrix
+  // cubo
+  glTranslatef(-t.x, -t.y, 0);
   glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
-
   base(t);
 
-  //translate para torre por cima da base
+  // translate para torre por cima da base
   torre(t);
 
-  //translate para torre por cima da base
-
+  // translate para torre por cima da base
 
   glTranslatef(t.x, (t.y + (COMPRIMENTO_TORRE / 2)), ALTURA_BASE);
   glRotatef(t.angCanhao, 1.0f, 0, 0);
@@ -441,7 +445,7 @@ void timer(int value)
   EIXOS = EIXOS + 1;
   printf("Direcao%.2f\nx:%.2f\ny%.2f\n", modelo.tanque.direccao, modelo.tanque.x, modelo.tanque.y);
 
-//if teclas true....flag mudar estado mais que uma tecla...
+  // if teclas true....flag mudar estado mais que uma tecla...
 
   if (estado.menuActivo || modelo.parado) // Sair em caso de o jogo estar parado ou menu estar activo
     return;

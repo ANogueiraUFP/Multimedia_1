@@ -136,11 +136,10 @@ void cubo()
       {0.5, -0.5, -0.5},  // 1
       {0.5, 0.5, -0.5},   // 2
       {-0.5, 0.5, -0.5},  // 3
-
-      {-0.5, -0.5, 0.5}, // 4
-      {0.5, -0.5, 0.5},  // 5
-      {0.5, 0.5, 0.5},   // 6
-      {-0.5, 0.5, 0.5},  // 7
+      {-0.5, -0.5, 0.5},  // 4
+      {0.5, -0.5, 0.5},   // 5
+      {0.5, 0.5, 0.5},    // 6
+      {-0.5, 0.5, 0.5},   // 7
   };
 
   GLfloat cores[][3] = {{0.0, 1.0, 1.0},
@@ -151,12 +150,12 @@ void cubo()
                         {0.0, 0.0, 1.0},
                         {1.0, 1.0, 1.0}};
 
-  desenhaPoligono(vertices[0], vertices[1], vertices[2], vertices[3], cores[0]);
-  desenhaPoligono(vertices[0], vertices[3], vertices[4], vertices[7], cores[1]);
-  desenhaPoligono(vertices[1], vertices[2], vertices[5], vertices[6], cores[2]);
-  desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], cores[3]);
-  desenhaPoligono(vertices[0], vertices[1], vertices[6], vertices[7], cores[4]);
-  desenhaPoligono(vertices[2], vertices[3], vertices[4], vertices[5], cores[5]);
+  desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], cores[0]);
+  desenhaPoligono(vertices[4], vertices[0], vertices[3], vertices[7], cores[1]);
+  desenhaPoligono(vertices[1], vertices[5], vertices[6], vertices[2], cores[2]);
+  desenhaPoligono(vertices[5], vertices[4], vertices[7], vertices[6], cores[3]);
+  desenhaPoligono(vertices[1], vertices[0], vertices[4], vertices[5], cores[4]);
+  desenhaPoligono(vertices[6], vertices[7], vertices[3], vertices[2], cores[5]);
 }
 
 // ... Definição das rotinas auxiliares de desenho ...
@@ -216,20 +215,22 @@ void draw(void)
   // mode: Specifies how polygons will be rasterized. Accepted values are GL_POINT, GL_LINE, and GL_FILL.
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
+  glPushMatrix();
+  glPopMatrix();
   cubo();
 
-  
-  glTranslatef(0.25, -0.5, -0.5);
-  glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+  glScalef(modelo.ladoCubo / 8, modelo.ladoCubo / 8, modelo.ladoCubo / 8);
+  glTranslatef(0, -0.5, -0.5);
+  glPushMatrix();
+  glPopMatrix();
   cubo();
 
-  //glTranslatef(-0.5, 0.25, -0.5);
-   // glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
-  //cubo();
-
-  //glTranslatef(-0.5, -0.5, 0.25);
-  //cubo();
+  glTranslatef(-0.5, -0.5, 0);
+  glPushMatrix();
+  glPopMatrix();
+  cubo();
 
   glPopMatrix();
 

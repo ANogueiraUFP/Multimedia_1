@@ -311,16 +311,17 @@ void desenhaCubo()
                            {0.5, 0.5, 0.5},
                            {-0.5, 0.5, 0.5}};
   GLfloat normais[][3] = {
+      {-1, 0, 0},
+      {0, -1, 0},
       {0, 0, -1},
-      // acrescentar as outras normais...
   };
 
   desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], normais[0]);
-  desenhaPoligono(vertices[2], vertices[3], vertices[7], vertices[6], normais[0]);
-  desenhaPoligono(vertices[3], vertices[0], vertices[4], vertices[7], normais[0]);
+  desenhaPoligono(vertices[2], vertices[3], vertices[7], vertices[6], normais[1]);
+  desenhaPoligono(vertices[3], vertices[0], vertices[4], vertices[7], normais[2]);
   desenhaPoligono(vertices[6], vertices[5], vertices[1], vertices[2], normais[0]);
-  desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], normais[0]);
-  desenhaPoligono(vertices[5], vertices[4], vertices[0], vertices[1], normais[0]);
+  desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], normais[1]);
+  desenhaPoligono(vertices[5], vertices[4], vertices[0], vertices[1], normais[2]);
 }
 
 void desenhaPersonagem(void)
