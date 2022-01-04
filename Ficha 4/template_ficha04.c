@@ -164,10 +164,12 @@ void eixos(void)
 
   // ... chamada das rotinas auxiliares de desenho ...
 
-  glPushMatrix();
+   glPushMatrix();
 
   glTranslatef(3, 3, 3);
-  glRotatef(EIXOS, 0, 1, 0);
+    glRotatef(20, 1, 0, 0);
+
+  glRotatef(EIXOS, 0, 0, 1);
 
   glRotatef(0, 1, 0, 0);
   glRotatef(0, 0, 1, 0);
@@ -218,19 +220,37 @@ void draw(void)
   // glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glScalef(modelo.ladoCubo, modelo.ladoCubo, modelo.ladoCubo);
   glPushMatrix();
-  glPopMatrix();
-  cubo();
 
-  glScalef(modelo.ladoCubo / 8, modelo.ladoCubo / 8, modelo.ladoCubo / 8);
-  glTranslatef(0, -0.5, -0.5);
   glPushMatrix();
-  glPopMatrix();
   cubo();
+  glPopMatrix();
 
-  glTranslatef(-0.5, -0.5, 0);
-  glPushMatrix();
-  glPopMatrix();
-  cubo();
+  for (float i = -0.5; i <= 0.5; i = i + 0.5)
+  {
+    glPushMatrix();
+    glTranslatef(i, -0.5, -0.5);
+    glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+    cubo();
+    glPopMatrix();
+  }
+
+  for (float i = -0.5; i <= 0.5; i = i + 0.5)
+  {
+    glPushMatrix();
+    glTranslatef(-0.5, -0.5, i);
+    glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+    cubo();
+    glPopMatrix();
+  }
+
+  for (float i = -0.5; i <= 0.5; i = i + 0.5)
+  {
+    glPushMatrix();
+    glTranslatef(-0.5, i, -0.5);
+    glScalef(modelo.ladoCubo / 4, modelo.ladoCubo / 4, modelo.ladoCubo / 4);
+    cubo();
+    glPopMatrix();
+  }
 
   glPopMatrix();
 
