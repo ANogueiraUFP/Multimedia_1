@@ -265,125 +265,65 @@ void bitmapCenterString(char *str, double x, double y)
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, (int)str[i]);
 }
 
-// ... Definição das rotinas auxiliares de desenho ...
-
-void cubo(GLfloat vertices[][3], GLfloat cores[][3])
+void cubo()
 {
+  GLfloat vertices[][3] = {
+      {-0.5, -0.5, -0.5}, // 0
+      {0.5, -0.5, -0.5},  // 1
+      {0.5, 0.5, -0.5},   // 2
+      {-0.5, 0.5, -0.5},  // 3
+      {-0.5, -0.5, 0.5},  // 4
+      {0.5, -0.5, 0.5},   // 5
+      {0.5, 0.5, 0.5},    // 6
+      {-0.5, 0.5, 0.5},   // 7
+  };
 
-  desenhaPoligono(vertices[0], vertices[1], vertices[2], vertices[3], cores[0]);
-  desenhaPoligono(vertices[0], vertices[3], vertices[4], vertices[7], cores[0]);
-  desenhaPoligono(vertices[1], vertices[2], vertices[5], vertices[6], cores[0]);
-  desenhaPoligono(vertices[4], vertices[5], vertices[6], vertices[7], cores[0]);
-  desenhaPoligono(vertices[0], vertices[1], vertices[6], vertices[7], cores[0]);
-  desenhaPoligono(vertices[2], vertices[3], vertices[4], vertices[5], cores[0]);
-}
+  GLfloat cores[][3] = {{0.0, 1.0, 1.0},
+                        {1.0, 0.0, 0.0},
+                        {1.0, 1.0, 0.0},
+                        {0.0, 1.0, 0.0},
+                        {1.0, 0.0, 1.0},
+                        {0.0, 0.0, 1.0},
+                        {1.0, 1.0, 1.0}};
 
-void torre(Tanque t)
-{
-  float c = COMPRIMENTO_TORRE / 2;
-  float l = LARGURA_TORRE / 2;
-  GLfloat vertices[][3] = {{t.x + l, t.y + c, ALTURA_BASE},
-                           {t.x - l, t.y + c, ALTURA_BASE},
-                           {t.x - l, t.y - c, ALTURA_BASE},
-                           {t.x + l, t.y - c, ALTURA_BASE},
-                           {t.x + l, t.y - c, ALTURA_BASE + ALTURA_TORRE},
-                           {t.x - l, t.y - c, ALTURA_BASE + ALTURA_TORRE},
-                           {t.x - l, t.y + c, ALTURA_BASE + ALTURA_TORRE},
-                           {t.x + l, t.y + c, ALTURA_BASE + ALTURA_TORRE}};
-
-  GLfloat cores[][3] = {{1.0, 0.0, 0.0}};
-
-  cubo(vertices, cores);
-  glPushMatrix();
-  glTranslatef(t.x, t.y, 0);
-  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
-  glTranslatef(-t.x, -t.y, 0);
-  glPopMatrix();
-}
-
-void base(Tanque t)
-{
-  float c = COMPRIMENTO_BASE / 2;
-  float l = LARGURA_BASE / 2;
-  GLfloat vertices[][3] = {{t.x + l, t.y + c, 0},
-                           {t.x - l, t.y + c, 0},
-                           {t.x - l, t.y - c, 0},
-                           {t.x + l, t.y - c, 0},
-                           {t.x + l, t.y - c, ALTURA_BASE},
-                           {t.x - l, t.y - c, ALTURA_BASE},
-                           {t.x - l, t.y + c, ALTURA_BASE},
-                           {t.x + l, t.y + c, ALTURA_BASE}};
-
-  GLfloat cores[][3] = {{0.0, 1.0, 0.0}};
-  cubo(vertices, cores);
-}
-
-void canhao(Tanque t)
-{
-  float c = t.y + COMPRIMENTO_TORRE / 2;
-  float c1 = COMPRIMENTO_CANHAO;
-  float r = RAIO_CANHAO;
-  GLfloat vertices[][3] = {{t.x + r, c + c1, ALTURA_BASE},
-                           {t.x - r, c + c1, ALTURA_BASE},
-                           {t.x - r, c, ALTURA_BASE},
-                           {t.x + r, c, ALTURA_BASE},
-                           {t.x + r, c, ALTURA_BASE + (r * 2)},
-                           {t.x - r, c, ALTURA_BASE + (r * 2)},
-                           {t.x - r, c + c1, ALTURA_BASE + (r * 2)},
-                           {t.x + r, c + c1, ALTURA_BASE + (r * 2)}};
-
-  GLfloat cores[][3] = {{0.0, 0.0, 1.0}};
-
-  cubo(vertices, cores);
-}
-
-void desenhaTanque_(Tanque t)
-{
-
-  // desenha base centrada na posição t.x, t.y, 0 - x,y,z
-  glPushMatrix();
-  glTranslatef(t.x, t.y, 0);
-  glRotatef(modelo.tanque.direccao, 0.0f, 0.0f, 1.0f);
-  // scale
-  // pushmatrix
-  // popMatrix
-  // cubo
-  glTranslatef(-t.x, -t.y, 0);
-  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
-  base(t);
-
-  // translate para torre por cima da base
-  torre(t);
-
-  // translate para torre por cima da base
-
-  glTranslatef(t.x, (t.y + (COMPRIMENTO_TORRE / 2)), ALTURA_BASE);
-  glRotatef(t.angCanhao, 1.0f, 0, 0);
-  glTranslatef(-t.x, -(t.y + (COMPRIMENTO_TORRE / 2)), -ALTURA_BASE);
-  canhao(t);
-
-  glPopMatrix();
+  desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], cores[0]);
+  desenhaPoligono(vertices[4], vertices[0], vertices[3], vertices[7], cores[1]);
+  desenhaPoligono(vertices[1], vertices[5], vertices[6], vertices[2], cores[2]);
+  desenhaPoligono(vertices[5], vertices[4], vertices[7], vertices[6], cores[3]);
+  desenhaPoligono(vertices[1], vertices[0], vertices[4], vertices[5], cores[4]);
+  desenhaPoligono(vertices[6], vertices[7], vertices[3], vertices[2], cores[5]);
 }
 
 void desenhaTanque(Tanque t)
 {
+  glPushMatrix();
 
-  // desenha base centrada na posição t.x, t.y, 0 - x,y,z
+  // BASE
   glPushMatrix();
   glTranslatef(t.x, t.y, 0);
   glRotatef(modelo.tanque.direccao, 0.0f, 0.0f, 1.0f);
-  glTranslatef(-t.x, -t.y, 0);
-  base(t);
+  glScalef(LARGURA_BASE, COMPRIMENTO_BASE, ALTURA_BASE);
+  cubo();
+  glPopMatrix();
 
-  glTranslatef(t.x, t.y, 0);
-  glRotatef(t.angTorre, 0, 0, 1);
-  glTranslatef(-t.x, -t.y, 0);
-  torre(t);
+  // Torre
+  glPushMatrix();
+  glTranslatef(t.x, t.y, 1);
+  glRotatef(t.angTorre, 0.0f, 0.0f, 1.0f);
+  glScalef(LARGURA_TORRE, COMPRIMENTO_TORRE, ALTURA_TORRE);
 
-  glTranslatef(t.x, (t.y + (COMPRIMENTO_TORRE / 2)), ALTURA_BASE);
+  cubo();
+  glPopMatrix();
+
+  // Canhao
+  glPushMatrix();
+  glTranslatef(t.x, 3, 1);
   glRotatef(t.angCanhao, 1.0f, 0, 0);
-  glTranslatef(-t.x, -(t.y + (COMPRIMENTO_TORRE / 2)), -ALTURA_BASE);
-  canhao(t);
+  glScalef(RAIO_CANHAO, COMPRIMENTO_CANHAO, RAIO_CANHAO);
+
+  cubo();
+  glPopMatrix();
+
   glPopMatrix();
 }
 
