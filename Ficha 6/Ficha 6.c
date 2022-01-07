@@ -311,9 +311,10 @@ void desenhaCubo()
                            {0.5, 0.5, 0.5},
                            {-0.5, 0.5, 0.5}};
   GLfloat normais[][3] = {
-      {-1, 0, 0},
-      {0, -1, 0},
       {0, 0, -1},
+      {-1, 0, 0},
+      {0, -1, 0}
+      // acrescentar as outras normais...
   };
 
   desenhaPoligono(vertices[1], vertices[0], vertices[3], vertices[2], normais[0]);
@@ -433,6 +434,7 @@ void desenhaModelo()
 
 void desenhaLabirinto(GLuint texID)
 {
+  // Código para desenhar o labirinto
   for (int i = 0; i < MAZE_HEIGHT; i++)
   {
     for (int j = 0; j < MAZE_WIDTH; j++)
@@ -634,12 +636,12 @@ void idle(void)
 /* Callback de temporizador */
 void timer(int value)
 {
-  GLfloat nx = 0, nz = 0;
-  GLboolean andar = GL_FALSE;
+  GLfloat nx=0,nz=0;
+  GLboolean andar=GL_FALSE;
 
   GLuint curr = glutGet(GLUT_ELAPSED_TIME);
   // Calcula velocidade baseado no tempo passado
-  float velocidade = modelo.objeto.vel * (curr - modelo.prev) * 0.001;
+	float velocidade= modelo.objeto.vel*(curr - modelo.prev )*0.001;
 
   glutTimerFunc(estado.timer, timer, 0);
   /* Acções do temporizador ...
@@ -648,45 +650,39 @@ void timer(int value)
 
   modelo.prev = curr;
 
-  if (estado.teclas.up)
+  if(estado.teclas.up)
   {
     // calcula nova posição nx,nz
-    nx = modelo.objeto.pos.x;
-    nz = modelo.objeto.pos.z;
-    if (!detectaColisao(nx, nz))
-    {
-      modelo.objeto.pos.x = -((modelo.objeto.vel * -cos(-modelo.objeto.dir)) - modelo.objeto.pos.x);
-      modelo.objeto.pos.z = -((modelo.objeto.vel * -sin(-modelo.objeto.dir)) - modelo.objeto.pos.z);
-    }
-
-    andar = GL_TRUE;
-  }
-
-  if (estado.teclas.down)
-  {
-    nx = modelo.objeto.pos.x;
-    nz = modelo.objeto.pos.z;
+    nx=modelo.objeto.pos.x;
+    nz=modelo.objeto.pos.z;
+		if(!detectaColisao(nx,nz)){
+      modelo.objeto.pos.x = -((modelo.objeto.vel*-cos(-modelo.objeto.dir))-modelo.objeto.pos.x);
+      modelo.objeto.pos.z = -((modelo.objeto.vel*-sin(-modelo.objeto.dir))-modelo.objeto.pos.z);
+		}
+    andar=GL_TRUE;
+	}
+	
+  if(estado.teclas.down){
+    nx=modelo.objeto.pos.x;
+    nz=modelo.objeto.pos.z;
     // calcula nova posição nx,nz
-    if (!detectaColisao(nx, nz))
-    {
-
-      modelo.objeto.pos.x = (modelo.objeto.vel * -cos(-modelo.objeto.dir)) + modelo.objeto.pos.x;
-      modelo.objeto.pos.z = (modelo.objeto.vel * -sin(-modelo.objeto.dir)) + modelo.objeto.pos.z;
-    }
-
-    andar = GL_TRUE;
-  }
-
-  if (estado.teclas.left)
-  {
+		if(!detectaColisao(nx,nz)){
+      
+      modelo.objeto.pos.x = (modelo.objeto.vel*-cos(-modelo.objeto.dir))+modelo.objeto.pos.x;
+      modelo.objeto.pos.z = (modelo.objeto.vel*-sin(-modelo.objeto.dir))+modelo.objeto.pos.z;
+		}
+    andar=GL_TRUE;
+	}
+	
+  if(estado.teclas.left){
     // rodar camara e objeto
     modelo.objeto.dir += 0.1;
   }
-  if (estado.teclas.right)
-  {
+	if(estado.teclas.right){
     // rodar camara e objeto
     modelo.objeto.dir -= 0.1;
-  }
+	}
+
 
   redisplayAll();
 }
