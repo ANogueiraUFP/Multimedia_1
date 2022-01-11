@@ -435,18 +435,7 @@ void desenhaModelo()
 void desenhaLabirinto(GLuint texID)
 {
   // Código para desenhar o labirinto
-  for (int i = 0; i < MAZE_HEIGHT; i++)
-  {
-    for (int j = 0; j < MAZE_WIDTH; j++)
-    {
-      if (mazedata[i][j] == '*')
-      {
-        glTranslatef(j - (MAZE_WIDTH / 2) + 1, 0, i - (MAZE_HEIGHT / 2) + 1);
-        desenhaCubo();
-        glTranslatef(-(j - (MAZE_WIDTH / 2)) - 1, 0, -(i - (MAZE_HEIGHT / 2)) - 1);
-      }
-    }
-  }
+
 }
 
 void desenhaChao(GLfloat dimensao, GLuint texID)
@@ -653,34 +642,29 @@ void timer(int value)
   if(estado.teclas.up)
   {
     // calcula nova posição nx,nz
-    nx=modelo.objeto.pos.x;
-    nz=modelo.objeto.pos.z;
+
 		if(!detectaColisao(nx,nz)){
-      modelo.objeto.pos.x = -((modelo.objeto.vel*-cos(-modelo.objeto.dir))-modelo.objeto.pos.x);
-      modelo.objeto.pos.z = -((modelo.objeto.vel*-sin(-modelo.objeto.dir))-modelo.objeto.pos.z);
+      
 		}
     andar=GL_TRUE;
 	}
 	
   if(estado.teclas.down){
-    nx=modelo.objeto.pos.x;
-    nz=modelo.objeto.pos.z;
+   
     // calcula nova posição nx,nz
 		if(!detectaColisao(nx,nz)){
       
-      modelo.objeto.pos.x = (modelo.objeto.vel*-cos(-modelo.objeto.dir))+modelo.objeto.pos.x;
-      modelo.objeto.pos.z = (modelo.objeto.vel*-sin(-modelo.objeto.dir))+modelo.objeto.pos.z;
+     
 		}
     andar=GL_TRUE;
 	}
 	
   if(estado.teclas.left){
     // rodar camara e objeto
-    modelo.objeto.dir += 0.1;
+   
   }
 	if(estado.teclas.right){
     // rodar camara e objeto
-    modelo.objeto.dir -= 0.1;
 	}
 
 
